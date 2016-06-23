@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> *                    PDB web development code<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * This code may be freely distributed and modified under the<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * terms of the GNU Lesser General Public Licence.  This should<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * be distributed with the code.  If you do not have a copy,<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * see:<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.gnu.org/copyleft/lesser.html<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Copyright for this code is held jointly by the individual<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * authors.  These should be listed in @author doc comments.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> *<a name="line.13"></a>
+<span class="sourceLineNo">014</span> *<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * Created on Aug 5, 2009<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * Created by ap3<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *<a name="line.17"></a>
+<span class="sourceLineNo">018</span> */<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>package org.biojava.bio.structure.secstruc;<a name="line.20"></a>
+<span class="sourceLineNo">021</span><a name="line.21"></a>
+<span class="sourceLineNo">022</span>public class SecStrucState{<a name="line.22"></a>
+<span class="sourceLineNo">023</span>        public boolean isBend() {<a name="line.23"></a>
+<span class="sourceLineNo">024</span>                return bend;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>        }<a name="line.25"></a>
+<span class="sourceLineNo">026</span><a name="line.26"></a>
+<span class="sourceLineNo">027</span>        public void setBend(boolean bend) {<a name="line.27"></a>
+<span class="sourceLineNo">028</span>                this.bend = bend;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>        }<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>        double phi;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>        double psi;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>        double omega;<a name="line.33"></a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span>        float kappa;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>        <a name="line.36"></a>
+<span class="sourceLineNo">037</span>        HBond accept1;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>        HBond accept2;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>        HBond donor1;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>        HBond donor2;<a name="line.40"></a>
+<span class="sourceLineNo">041</span><a name="line.41"></a>
+<span class="sourceLineNo">042</span>        boolean[] turn;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>        boolean bend;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>        <a name="line.44"></a>
+<span class="sourceLineNo">045</span>        SecStrucType secStruc;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>        SecStrucType threeState;<a name="line.46"></a>
+<span class="sourceLineNo">047</span><a name="line.47"></a>
+<span class="sourceLineNo">048</span>        public SecStrucState(){<a name="line.48"></a>
+<span class="sourceLineNo">049</span>                phi = 360;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                psi = 360 ;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                omega = 360;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                accept1 = new HBond();<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                accept2 = new HBond();<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                donor1  = new HBond();<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                donor2  = new HBond();<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                turn = new boolean[3];<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                turn[0] = false;<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                turn[1] = false;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                turn[2] = false;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                bend = false;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                secStruc = SecStrucType.coil;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                threeState = SecStrucType.coil;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                kappa = 360;<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        }<a name="line.64"></a>
+<span class="sourceLineNo">065</span><a name="line.65"></a>
+<span class="sourceLineNo">066</span>        public float getKappa() {<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                return kappa;<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        }<a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>        public void setKappa(float kappa) {<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                this.kappa = kappa;<a name="line.71"></a>
+<span class="sourceLineNo">072</span>        }<a name="line.72"></a>
+<span class="sourceLineNo">073</span><a name="line.73"></a>
+<span class="sourceLineNo">074</span>        public String toString(){<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                StringBuffer buf = new StringBuffer();<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                buf.append(secStruc.toString()+threeState.toString() + " a1:"+accept1 + " a2:" + accept2 + " d1:" + donor1 + " d2:" + donor2);<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                return buf.toString();<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        }<a name="line.78"></a>
+<span class="sourceLineNo">079</span><a name="line.79"></a>
+<span class="sourceLineNo">080</span>        public boolean[] getTurn() {<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                return turn;<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        }<a name="line.82"></a>
+<span class="sourceLineNo">083</span><a name="line.83"></a>
+<span class="sourceLineNo">084</span>        public void setTurn(boolean[] turn) {<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                this.turn = turn;<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        }<a name="line.86"></a>
+<span class="sourceLineNo">087</span><a name="line.87"></a>
+<span class="sourceLineNo">088</span>        public HBond getAccept1() {<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                return accept1;<a name="line.89"></a>
+<span class="sourceLineNo">090</span>        }<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        public void setAccept1(HBond accept1) {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                this.accept1 = accept1;<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        }<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        public HBond getAccept2() {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                return accept2;<a name="line.95"></a>
+<span class="sourceLineNo">096</span>        }<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        public void setAccept2(HBond accept2) {<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                this.accept2 = accept2;<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        }<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        public HBond getDonor1() {<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                return donor1;<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        }<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        public void setDonor1(HBond donor1) {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                this.donor1 = donor1;<a name="line.104"></a>
+<span class="sourceLineNo">105</span>        }<a name="line.105"></a>
+<span class="sourceLineNo">106</span>        public HBond getDonor2() {<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                return donor2;<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        }<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        public void setDonor2(HBond donor2) {<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                this.donor2 = donor2;<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        }<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        public double getPhi() {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                return phi;<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        }<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        public void setPhi(double phi) {<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                this.phi = phi;<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        }<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        public double getPsi() {<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                return psi;<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        }<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        public void setPsi(double psi) {<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                this.psi = psi;<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        }<a name="line.123"></a>
+<span class="sourceLineNo">124</span><a name="line.124"></a>
+<span class="sourceLineNo">125</span><a name="line.125"></a>
+<span class="sourceLineNo">126</span>        public SecStrucType getSecStruc() {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                return secStruc;<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        }<a name="line.128"></a>
+<span class="sourceLineNo">129</span><a name="line.129"></a>
+<span class="sourceLineNo">130</span>        public void setSecStruc(SecStrucType secStruc) {<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                this.secStruc = secStruc;<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        }<a name="line.132"></a>
+<span class="sourceLineNo">133</span><a name="line.133"></a>
+<span class="sourceLineNo">134</span>        public SecStrucType getThreeState() {<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                return threeState;<a name="line.135"></a>
+<span class="sourceLineNo">136</span>        }<a name="line.136"></a>
+<span class="sourceLineNo">137</span><a name="line.137"></a>
+<span class="sourceLineNo">138</span>        public void setThreeState(SecStrucType threeState) {<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                this.threeState = threeState;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>        }<a name="line.140"></a>
+<span class="sourceLineNo">141</span><a name="line.141"></a>
+<span class="sourceLineNo">142</span><a name="line.142"></a>
+<span class="sourceLineNo">143</span>        public double getOmega() {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                return omega;<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        }<a name="line.145"></a>
+<span class="sourceLineNo">146</span><a name="line.146"></a>
+<span class="sourceLineNo">147</span>        public void setOmega(double omega) {<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                this.omega = omega;<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        }<a name="line.149"></a>
+<span class="sourceLineNo">150</span><a name="line.150"></a>
+<span class="sourceLineNo">151</span><a name="line.151"></a>
+<span class="sourceLineNo">152</span><a name="line.152"></a>
+<span class="sourceLineNo">153</span><a name="line.153"></a>
+<span class="sourceLineNo">154</span>}<a name="line.154"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

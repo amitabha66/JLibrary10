@@ -1,0 +1,829 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package org.biojava3.aaproperties.xml;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.io.BufferedWriter;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.io.FileInputStream;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.io.FileWriter;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.io.IOException;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import java.io.StringWriter;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import java.util.ArrayList;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import java.util.List;<a name="line.9"></a>
+<span class="sourceLineNo">010</span><a name="line.10"></a>
+<span class="sourceLineNo">011</span>import javax.xml.bind.JAXBContext;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import javax.xml.bind.JAXBException;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import javax.xml.bind.Marshaller;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import javax.xml.bind.Unmarshaller;<a name="line.14"></a>
+<span class="sourceLineNo">015</span><a name="line.15"></a>
+<span class="sourceLineNo">016</span>import org.junit.Test;<a name="line.16"></a>
+<span class="sourceLineNo">017</span><a name="line.17"></a>
+<span class="sourceLineNo">018</span>public class ElementTester {<a name="line.18"></a>
+<span class="sourceLineNo">019</span>        @Test<a name="line.19"></a>
+<span class="sourceLineNo">020</span>        public void generateSchema() throws JAXBException, IOException{<a name="line.20"></a>
+<span class="sourceLineNo">021</span>                JAXBContext context = JAXBContext.newInstance(ElementTable.class);<a name="line.21"></a>
+<span class="sourceLineNo">022</span>                context.generateSchema(new SchemaGenerator("./src/main/resources/ElementMass.xsd"));<a name="line.22"></a>
+<span class="sourceLineNo">023</span>        }<a name="line.23"></a>
+<span class="sourceLineNo">024</span>        <a name="line.24"></a>
+<span class="sourceLineNo">025</span>        @Test<a name="line.25"></a>
+<span class="sourceLineNo">026</span>        public void readXml() throws JAXBException, IOException{<a name="line.26"></a>
+<span class="sourceLineNo">027</span>                ElementTable iTable = new ElementTable();<a name="line.27"></a>
+<span class="sourceLineNo">028</span>                // Get a JAXB Context for the object we created above<a name="line.28"></a>
+<span class="sourceLineNo">029</span>                JAXBContext jc = JAXBContext.newInstance(iTable.getClass());<a name="line.29"></a>
+<span class="sourceLineNo">030</span>                Unmarshaller u = jc.createUnmarshaller();<a name="line.30"></a>
+<span class="sourceLineNo">031</span>                iTable = (ElementTable)u.unmarshal(new FileInputStream("./src/main/resources/ElementMass.xml" ) );<a name="line.31"></a>
+<span class="sourceLineNo">032</span>                for(Element e:iTable.getElement()){<a name="line.32"></a>
+<span class="sourceLineNo">033</span>                        System.out.println(e);<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                }<a name="line.34"></a>
+<span class="sourceLineNo">035</span>        }<a name="line.35"></a>
+<span class="sourceLineNo">036</span>        <a name="line.36"></a>
+<span class="sourceLineNo">037</span>        @Test<a name="line.37"></a>
+<span class="sourceLineNo">038</span>        public void generateXml() throws JAXBException, IOException {<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                List&lt;Isotope&gt; iList = new ArrayList&lt;Isotope&gt;();<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                Element hydrogen = new Element("Hydrogen", "H", 1, null, 1.00794);<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                iList.add(new Isotope("Hydrogen", 1, 1.00782503207));<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                iList.add(new Isotope("Deuterium", 2, 2.0141017778));<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                iList.add(new Isotope("Tritium", 3, 3.0160492777));<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                hydrogen.setIsotopes(iList);<a name="line.44"></a>
+<span class="sourceLineNo">045</span><a name="line.45"></a>
+<span class="sourceLineNo">046</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                Element helium = new Element("Helium", "He", 2, null, 4.002602);<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                iList.add(new Isotope("Helium-3", 3, 3.0160293191));<a name="line.48"></a>
+<span class="sourceLineNo">049</span>                iList.add(new Isotope("Helium-4", 4, 4.00260325415));<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                helium.setIsotopes(iList);<a name="line.50"></a>
+<span class="sourceLineNo">051</span><a name="line.51"></a>
+<span class="sourceLineNo">052</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                Element lithium = new Element("Lithium", "Li", 3, null, 6.941);<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                iList.add(new Isotope("Lithium-6", 6, 6.015122795));<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                iList.add(new Isotope("Lithium-7", 7, 7.01600455));<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                lithium.setIsotopes(iList);<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                Element beryllium = new Element("Beryllium", "Be", 4, null, 9.012182);<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                iList.add(new Isotope("Beryllium-9", 9, 9.0121822));<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                beryllium.setIsotopes(iList);<a name="line.61"></a>
+<span class="sourceLineNo">062</span><a name="line.62"></a>
+<span class="sourceLineNo">063</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                Element boron = new Element("Boron", "B", 5, null, 10.811);<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                iList.add(new Isotope("Boron-10", 10, 10.012937));<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                iList.add(new Isotope("Boron-11", 11, 11.0093054));<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                boron.setIsotopes(iList);<a name="line.67"></a>
+<span class="sourceLineNo">068</span><a name="line.68"></a>
+<span class="sourceLineNo">069</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                Element carbon = new Element("Carbon", "C", 6, null, 12.0107);<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                iList.add(new Isotope("Carbon-12", 12, 12.0));<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                iList.add(new Isotope("Carbon-13", 13, 13.0033548378));<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                iList.add(new Isotope("Carbon-14", 14, 14.003241989));<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                carbon.setIsotopes(iList);<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                Element nitrogen = new Element("Nitrogen", "N", 7, null, 14.0067);<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                iList.add(new Isotope("Nitrogen-14", 14, 14.0030740048));<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                iList.add(new Isotope("Nitrogen-15", 15, 15.0001088982));<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                nitrogen.setIsotopes(iList);<a name="line.80"></a>
+<span class="sourceLineNo">081</span><a name="line.81"></a>
+<span class="sourceLineNo">082</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                Element oxygen = new Element("Oxygen", "O", 8, null, 15.9994);<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                iList.add(new Isotope("Oxygen-16", 16, 15.99491461956));<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                iList.add(new Isotope("Oxygen-17", 17, 16.9991317));<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                iList.add(new Isotope("Oxygen-18", 18, 17.999161));<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                oxygen.setIsotopes(iList);<a name="line.87"></a>
+<span class="sourceLineNo">088</span><a name="line.88"></a>
+<span class="sourceLineNo">089</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                Element fluorine = new Element("Fluorine", "F", 9, null, 18.9984032);<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                iList.add(new Isotope("Fluorine-19", 19, 18.99840322));<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                fluorine.setIsotopes(iList);<a name="line.92"></a>
+<span class="sourceLineNo">093</span><a name="line.93"></a>
+<span class="sourceLineNo">094</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                Element neon = new Element("Neon", "Ne", 10, null, 20.1797);<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                iList.add(new Isotope("Neon-20", 20, 19.9924401754));<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                iList.add(new Isotope("Neon-21", 21, 20.99384668));<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                iList.add(new Isotope("Neon-22", 22, 21.991385114));<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                neon.setIsotopes(iList);<a name="line.99"></a>
+<span class="sourceLineNo">100</span><a name="line.100"></a>
+<span class="sourceLineNo">101</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                Element sodium = new Element("Sodium", "Na", 11, null, 22.98976928);<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                iList.add(new Isotope("Sodium-23", 23, 22.9897692809));<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                sodium.setIsotopes(iList);<a name="line.104"></a>
+<span class="sourceLineNo">105</span><a name="line.105"></a>
+<span class="sourceLineNo">106</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                Element magnesium = new Element("Magnesium", "Mg", 12, null, 24.305);<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                iList.add(new Isotope("Magnesium-24", 24, 23.9850417));<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                iList.add(new Isotope("Magnesium-25", 25, 24.98583692));<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                iList.add(new Isotope("Magnesium-26", 26, 25.982592929));<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                magnesium.setIsotopes(iList);<a name="line.111"></a>
+<span class="sourceLineNo">112</span><a name="line.112"></a>
+<span class="sourceLineNo">113</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                Element aluminium = new Element("Aluminium", "Al", 13, null, 26.9815386);<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                iList.add(new Isotope("Aluminium-27", 27, 26.98153863));<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                aluminium.setIsotopes(iList);<a name="line.116"></a>
+<span class="sourceLineNo">117</span><a name="line.117"></a>
+<span class="sourceLineNo">118</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                Element silicon = new Element("Silicon", "Si", 14, null, 28.0855);<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                iList.add(new Isotope("Silicon-28", 28, 27.9769265325));<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                iList.add(new Isotope("Silicon-29", 29, 28.9764947));<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                iList.add(new Isotope("Silicon-30", 30, 29.97377017));<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                silicon.setIsotopes(iList);<a name="line.123"></a>
+<span class="sourceLineNo">124</span><a name="line.124"></a>
+<span class="sourceLineNo">125</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                Element phosphorus = new Element("Phosphorus", "P", 15, null, 30.973762);<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                iList.add(new Isotope("Phosphorus-31", 31, 30.97376163));<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                phosphorus.setIsotopes(iList);<a name="line.128"></a>
+<span class="sourceLineNo">129</span><a name="line.129"></a>
+<span class="sourceLineNo">130</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                Element sulfur = new Element("Sulfur", "S", 16, null, 32.065);<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                iList.add(new Isotope("Sulfur-32", 32, 31.972071));<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                iList.add(new Isotope("Sulfur-33", 33, 32.97145876));<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                iList.add(new Isotope("Sulfur-34", 34, 33.9678669));<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                iList.add(new Isotope("Sulfur-36", 36, 35.96708076));<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                sulfur.setIsotopes(iList);<a name="line.136"></a>
+<span class="sourceLineNo">137</span><a name="line.137"></a>
+<span class="sourceLineNo">138</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                Element chlorine = new Element("Chlorine", "Cl", 17, null, 35.453);<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                iList.add(new Isotope("Chlorine-35", 35, 34.96885268));<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                iList.add(new Isotope("Chlorine-37", 37, 36.96590259));<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                chlorine.setIsotopes(iList);<a name="line.142"></a>
+<span class="sourceLineNo">143</span><a name="line.143"></a>
+<span class="sourceLineNo">144</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                Element argon = new Element("Argon", "Ar", 18, null, 39.948);<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                iList.add(new Isotope("Argon-36", 36, 35.967545106));<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                iList.add(new Isotope("Argon-38", 38, 37.9627324));<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                iList.add(new Isotope("Argon-40", 40, 39.9623831225));<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                argon.setIsotopes(iList);<a name="line.149"></a>
+<span class="sourceLineNo">150</span><a name="line.150"></a>
+<span class="sourceLineNo">151</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                Element potassium = new Element("Potassium", "K", 19, null, 39.0983);<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                iList.add(new Isotope("Potassium-39", 39, 38.96370668));<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                iList.add(new Isotope("Potassium-40", 40, 39.96399848));<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                iList.add(new Isotope("Potassium-41", 41, 40.96182576));<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                potassium.setIsotopes(iList);<a name="line.156"></a>
+<span class="sourceLineNo">157</span><a name="line.157"></a>
+<span class="sourceLineNo">158</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                Element calcium = new Element("Calcium", "Ca", 20, null, 40.078);<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                iList.add(new Isotope("Calcium-40", 40, 39.96259098));<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                iList.add(new Isotope("Calcium-42", 42, 41.95861801));<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                iList.add(new Isotope("Calcium-43", 43, 42.9587666));<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                iList.add(new Isotope("Calcium-44", 44, 43.9554818));<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                iList.add(new Isotope("Calcium-46", 46, 45.9536926));<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                iList.add(new Isotope("Calcium-48", 48, 47.952534));<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                calcium.setIsotopes(iList);<a name="line.166"></a>
+<span class="sourceLineNo">167</span><a name="line.167"></a>
+<span class="sourceLineNo">168</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                Element scandium = new Element("Scandium", "Sc", 21, null, 44.955912);<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                iList.add(new Isotope("Scandium-45", 45, 44.9559119));<a name="line.170"></a>
+<span class="sourceLineNo">171</span>                scandium.setIsotopes(iList);<a name="line.171"></a>
+<span class="sourceLineNo">172</span><a name="line.172"></a>
+<span class="sourceLineNo">173</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                Element titanium = new Element("Titanium", "Ti", 22, null, 47.867);<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                iList.add(new Isotope("Titanium-46", 46, 45.9526316));<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                iList.add(new Isotope("Titanium-47", 47, 46.9517631));<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                iList.add(new Isotope("Titanium-48", 48, 47.9479463));<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                iList.add(new Isotope("Titanium-49", 49, 48.94787));<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                iList.add(new Isotope("Titanium-50", 50, 49.9447912));<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                titanium.setIsotopes(iList);<a name="line.180"></a>
+<span class="sourceLineNo">181</span><a name="line.181"></a>
+<span class="sourceLineNo">182</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.182"></a>
+<span class="sourceLineNo">183</span>                Element vanadium = new Element("Vanadium", "V", 23, null, 50.9415);<a name="line.183"></a>
+<span class="sourceLineNo">184</span>                iList.add(new Isotope("Vanadium-50", 50, 49.9471585));<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                iList.add(new Isotope("Vanadium-51", 51, 50.9439595));<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                vanadium.setIsotopes(iList);<a name="line.186"></a>
+<span class="sourceLineNo">187</span><a name="line.187"></a>
+<span class="sourceLineNo">188</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                Element chromium = new Element("Chromium", "Cr", 24, null, 51.9961);<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                iList.add(new Isotope("Chromium-50", 50, 49.9460442));<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                iList.add(new Isotope("Chromium-52", 52, 51.9405075));<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                iList.add(new Isotope("Chromium-53", 53, 52.9406494));<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                iList.add(new Isotope("Chromium-54", 54, 53.9388804));<a name="line.193"></a>
+<span class="sourceLineNo">194</span>                chromium.setIsotopes(iList);<a name="line.194"></a>
+<span class="sourceLineNo">195</span><a name="line.195"></a>
+<span class="sourceLineNo">196</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                Element manganese = new Element("Manganese", "Mn", 25, null, 54.938045);<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                iList.add(new Isotope("Manganese-55", 55, 54.9380451));<a name="line.198"></a>
+<span class="sourceLineNo">199</span>                manganese.setIsotopes(iList);<a name="line.199"></a>
+<span class="sourceLineNo">200</span><a name="line.200"></a>
+<span class="sourceLineNo">201</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.201"></a>
+<span class="sourceLineNo">202</span>                Element iron = new Element("Iron", "Fe", 26, null, 55.845);<a name="line.202"></a>
+<span class="sourceLineNo">203</span>                iList.add(new Isotope("Iron-54", 54, 53.9396105));<a name="line.203"></a>
+<span class="sourceLineNo">204</span>                iList.add(new Isotope("Iron-56", 56, 55.9349375));<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                iList.add(new Isotope("Iron-57", 57, 56.935394));<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                iList.add(new Isotope("Iron-58", 58, 57.9332756));<a name="line.206"></a>
+<span class="sourceLineNo">207</span>                iron.setIsotopes(iList);<a name="line.207"></a>
+<span class="sourceLineNo">208</span><a name="line.208"></a>
+<span class="sourceLineNo">209</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                Element cobalt = new Element("Cobalt", "Co", 27, null, 58.933195);<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                iList.add(new Isotope("Cobalt-59", 59, 58.933195));<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                cobalt.setIsotopes(iList);<a name="line.212"></a>
+<span class="sourceLineNo">213</span><a name="line.213"></a>
+<span class="sourceLineNo">214</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                Element nickel = new Element("Nickel", "Ni", 28, null, 58.6934);<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                iList.add(new Isotope("Nickel-58", 58, 57.9353429));<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                iList.add(new Isotope("Nickel-60", 60, 59.9307864));<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                iList.add(new Isotope("Nickel-61", 61, 60.931056));<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                iList.add(new Isotope("Nickel-62", 62, 61.9283451));<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                iList.add(new Isotope("Nickel-64", 64, 63.927966));<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                nickel.setIsotopes(iList);<a name="line.221"></a>
+<span class="sourceLineNo">222</span><a name="line.222"></a>
+<span class="sourceLineNo">223</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                Element copper = new Element("Copper", "Cu", 29, null, 63.546);<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                iList.add(new Isotope("Copper-63", 63, 62.9295975));<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                iList.add(new Isotope("Copper-65", 65, 64.9277895));<a name="line.226"></a>
+<span class="sourceLineNo">227</span>                copper.setIsotopes(iList);<a name="line.227"></a>
+<span class="sourceLineNo">228</span><a name="line.228"></a>
+<span class="sourceLineNo">229</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.229"></a>
+<span class="sourceLineNo">230</span>                Element zinc = new Element("Zinc", "Zn", 30, null, 65.38);<a name="line.230"></a>
+<span class="sourceLineNo">231</span>                iList.add(new Isotope("Zinc-64", 64, 63.9291422));<a name="line.231"></a>
+<span class="sourceLineNo">232</span>                iList.add(new Isotope("Zinc-66", 66, 65.9260334));<a name="line.232"></a>
+<span class="sourceLineNo">233</span>                iList.add(new Isotope("Zinc-67", 67, 66.9271273));<a name="line.233"></a>
+<span class="sourceLineNo">234</span>                iList.add(new Isotope("Zinc-68", 68, 67.9248442));<a name="line.234"></a>
+<span class="sourceLineNo">235</span>                iList.add(new Isotope("Zinc-70", 70, 69.9253193));<a name="line.235"></a>
+<span class="sourceLineNo">236</span>                zinc.setIsotopes(iList);<a name="line.236"></a>
+<span class="sourceLineNo">237</span><a name="line.237"></a>
+<span class="sourceLineNo">238</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.238"></a>
+<span class="sourceLineNo">239</span>                Element gallium = new Element("Gallium", "Ga", 31, null, 69.723);<a name="line.239"></a>
+<span class="sourceLineNo">240</span>                iList.add(new Isotope("Gallium-69", 69, 68.9255736));<a name="line.240"></a>
+<span class="sourceLineNo">241</span>                iList.add(new Isotope("Gallium-71", 71, 70.9247013));<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                gallium.setIsotopes(iList);<a name="line.242"></a>
+<span class="sourceLineNo">243</span><a name="line.243"></a>
+<span class="sourceLineNo">244</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.244"></a>
+<span class="sourceLineNo">245</span>                Element germanium = new Element("Germanium", "Ge", 32, null, 72.64);<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                iList.add(new Isotope("Germanium-70", 70, 69.9242474));<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                iList.add(new Isotope("Germanium-72", 72, 71.9220758));<a name="line.247"></a>
+<span class="sourceLineNo">248</span>                iList.add(new Isotope("Germanium-73", 73, 72.9234589));<a name="line.248"></a>
+<span class="sourceLineNo">249</span>                iList.add(new Isotope("Germanium-74", 74, 73.9211778));<a name="line.249"></a>
+<span class="sourceLineNo">250</span>                iList.add(new Isotope("Germanium-76", 76, 75.9214026));<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                germanium.setIsotopes(iList);<a name="line.251"></a>
+<span class="sourceLineNo">252</span><a name="line.252"></a>
+<span class="sourceLineNo">253</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                Element arsenic = new Element("Arsenic", "As", 33, null, 74.9216);<a name="line.254"></a>
+<span class="sourceLineNo">255</span>                iList.add(new Isotope("Arsenic-75", 75, 74.9215965));<a name="line.255"></a>
+<span class="sourceLineNo">256</span>                arsenic.setIsotopes(iList);<a name="line.256"></a>
+<span class="sourceLineNo">257</span><a name="line.257"></a>
+<span class="sourceLineNo">258</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.258"></a>
+<span class="sourceLineNo">259</span>                Element selenium = new Element("Selenium", "Se", 34, null, 78.96);<a name="line.259"></a>
+<span class="sourceLineNo">260</span>                iList.add(new Isotope("Selenium-74", 74, 73.9224764));<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                iList.add(new Isotope("Selenium-76", 76, 75.9192136));<a name="line.261"></a>
+<span class="sourceLineNo">262</span>                iList.add(new Isotope("Selenium-77", 77, 76.919914));<a name="line.262"></a>
+<span class="sourceLineNo">263</span>                iList.add(new Isotope("Selenium-78", 78, 77.9173091));<a name="line.263"></a>
+<span class="sourceLineNo">264</span>                iList.add(new Isotope("Selenium-80", 80, 79.9165213));<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                iList.add(new Isotope("Selenium-82", 82, 81.9166994));<a name="line.265"></a>
+<span class="sourceLineNo">266</span>                selenium.setIsotopes(iList);<a name="line.266"></a>
+<span class="sourceLineNo">267</span><a name="line.267"></a>
+<span class="sourceLineNo">268</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.268"></a>
+<span class="sourceLineNo">269</span>                Element bromine = new Element("Bromine", "Br", 35, null, 79.904);<a name="line.269"></a>
+<span class="sourceLineNo">270</span>                iList.add(new Isotope("Bromine-79", 79, 78.9183371));<a name="line.270"></a>
+<span class="sourceLineNo">271</span>                iList.add(new Isotope("Bromine-81", 81, 80.9162906));<a name="line.271"></a>
+<span class="sourceLineNo">272</span>                bromine.setIsotopes(iList);<a name="line.272"></a>
+<span class="sourceLineNo">273</span><a name="line.273"></a>
+<span class="sourceLineNo">274</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                Element krypton = new Element("Krypton", "Kr", 36, null, 83.798);<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                iList.add(new Isotope("Krypton-78", 78, 77.9203648));<a name="line.276"></a>
+<span class="sourceLineNo">277</span>                iList.add(new Isotope("Krypton-80", 80, 79.916379));<a name="line.277"></a>
+<span class="sourceLineNo">278</span>                iList.add(new Isotope("Krypton-82", 82, 81.9134836));<a name="line.278"></a>
+<span class="sourceLineNo">279</span>                iList.add(new Isotope("Krypton-83", 83, 82.914136));<a name="line.279"></a>
+<span class="sourceLineNo">280</span>                iList.add(new Isotope("Krypton-84", 84, 83.911507));<a name="line.280"></a>
+<span class="sourceLineNo">281</span>                iList.add(new Isotope("Krypton-86", 86, 85.91061073));<a name="line.281"></a>
+<span class="sourceLineNo">282</span>                krypton.setIsotopes(iList);<a name="line.282"></a>
+<span class="sourceLineNo">283</span><a name="line.283"></a>
+<span class="sourceLineNo">284</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.284"></a>
+<span class="sourceLineNo">285</span>                Element rubidium = new Element("Rubidium", "Rb", 37, null, 85.4678);<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                iList.add(new Isotope("Rubidium-85", 85, 84.911789738));<a name="line.286"></a>
+<span class="sourceLineNo">287</span>                iList.add(new Isotope("Rubidium-87", 87, 86.909180527));<a name="line.287"></a>
+<span class="sourceLineNo">288</span>                rubidium.setIsotopes(iList);<a name="line.288"></a>
+<span class="sourceLineNo">289</span><a name="line.289"></a>
+<span class="sourceLineNo">290</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.290"></a>
+<span class="sourceLineNo">291</span>                Element strontium = new Element("Strontium", "Sr", 38, null, 87.62);<a name="line.291"></a>
+<span class="sourceLineNo">292</span>                iList.add(new Isotope("Strontium-84", 84, 83.913425));<a name="line.292"></a>
+<span class="sourceLineNo">293</span>                iList.add(new Isotope("Strontium-86", 86, 85.9092602));<a name="line.293"></a>
+<span class="sourceLineNo">294</span>                iList.add(new Isotope("Strontium-87", 87, 86.9088771));<a name="line.294"></a>
+<span class="sourceLineNo">295</span>                iList.add(new Isotope("Strontium-88", 88, 87.9056121));<a name="line.295"></a>
+<span class="sourceLineNo">296</span>                strontium.setIsotopes(iList);<a name="line.296"></a>
+<span class="sourceLineNo">297</span><a name="line.297"></a>
+<span class="sourceLineNo">298</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.298"></a>
+<span class="sourceLineNo">299</span>                Element yttrium = new Element("Yttrium", "Y", 39, null, 88.90585);<a name="line.299"></a>
+<span class="sourceLineNo">300</span>                iList.add(new Isotope("Yttrium-89", 89, 88.9058483));<a name="line.300"></a>
+<span class="sourceLineNo">301</span>                yttrium.setIsotopes(iList);<a name="line.301"></a>
+<span class="sourceLineNo">302</span><a name="line.302"></a>
+<span class="sourceLineNo">303</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.303"></a>
+<span class="sourceLineNo">304</span>                Element zirconium = new Element("Zirconium", "Zr", 40, null, 91.224);<a name="line.304"></a>
+<span class="sourceLineNo">305</span>                iList.add(new Isotope("Zirconium-90", 90, 89.9047044));<a name="line.305"></a>
+<span class="sourceLineNo">306</span>                iList.add(new Isotope("Zirconium-91", 91, 90.9056458));<a name="line.306"></a>
+<span class="sourceLineNo">307</span>                iList.add(new Isotope("Zirconium-92", 92, 91.9050408));<a name="line.307"></a>
+<span class="sourceLineNo">308</span>                iList.add(new Isotope("Zirconium-94", 94, 93.9063152));<a name="line.308"></a>
+<span class="sourceLineNo">309</span>                iList.add(new Isotope("Zirconium-96", 96, 95.9082734));<a name="line.309"></a>
+<span class="sourceLineNo">310</span>                zirconium.setIsotopes(iList);<a name="line.310"></a>
+<span class="sourceLineNo">311</span><a name="line.311"></a>
+<span class="sourceLineNo">312</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.312"></a>
+<span class="sourceLineNo">313</span>                Element niobium = new Element("Niobium", "Nb", 41, null, 92.90638);<a name="line.313"></a>
+<span class="sourceLineNo">314</span>                iList.add(new Isotope("Niobium-93", 93, 92.9063781));<a name="line.314"></a>
+<span class="sourceLineNo">315</span>                niobium.setIsotopes(iList);<a name="line.315"></a>
+<span class="sourceLineNo">316</span><a name="line.316"></a>
+<span class="sourceLineNo">317</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.317"></a>
+<span class="sourceLineNo">318</span>                Element molybdenum = new Element("Molybdenum", "Mo", 42, null, 95.96);<a name="line.318"></a>
+<span class="sourceLineNo">319</span>                iList.add(new Isotope("Molybdenum-92", 92, 91.906811));<a name="line.319"></a>
+<span class="sourceLineNo">320</span>                iList.add(new Isotope("Molybdenum-94", 94, 93.9050883));<a name="line.320"></a>
+<span class="sourceLineNo">321</span>                iList.add(new Isotope("Molybdenum-95", 95, 94.9058421));<a name="line.321"></a>
+<span class="sourceLineNo">322</span>                iList.add(new Isotope("Molybdenum-96", 96, 95.9046795));<a name="line.322"></a>
+<span class="sourceLineNo">323</span>                iList.add(new Isotope("Molybdenum-97", 97, 96.9060215));<a name="line.323"></a>
+<span class="sourceLineNo">324</span>                iList.add(new Isotope("Molybdenum-98", 98, 97.9054082));<a name="line.324"></a>
+<span class="sourceLineNo">325</span>                iList.add(new Isotope("Molybdenum-100", 100, 99.907477));<a name="line.325"></a>
+<span class="sourceLineNo">326</span>                molybdenum.setIsotopes(iList);<a name="line.326"></a>
+<span class="sourceLineNo">327</span><a name="line.327"></a>
+<span class="sourceLineNo">328</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.328"></a>
+<span class="sourceLineNo">329</span>                Element technetium = new Element("Technetium", "Tc", 43, null, 98.0);<a name="line.329"></a>
+<span class="sourceLineNo">330</span>                iList.add(new Isotope("Technetium-97", 97, 96.906365));<a name="line.330"></a>
+<span class="sourceLineNo">331</span>                iList.add(new Isotope("Technetium-98", 98, 97.907216));<a name="line.331"></a>
+<span class="sourceLineNo">332</span>                iList.add(new Isotope("Technetium-99", 99, 98.9062547));<a name="line.332"></a>
+<span class="sourceLineNo">333</span>                technetium.setIsotopes(iList);<a name="line.333"></a>
+<span class="sourceLineNo">334</span><a name="line.334"></a>
+<span class="sourceLineNo">335</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.335"></a>
+<span class="sourceLineNo">336</span>                Element ruthenium = new Element("Ruthenium", "Ru", 44, null, 101.07);<a name="line.336"></a>
+<span class="sourceLineNo">337</span>                iList.add(new Isotope("Ruthenium-96", 96, 95.907598));<a name="line.337"></a>
+<span class="sourceLineNo">338</span>                iList.add(new Isotope("Ruthenium-98", 98, 97.905287));<a name="line.338"></a>
+<span class="sourceLineNo">339</span>                iList.add(new Isotope("Ruthenium-99", 99, 98.9059393));<a name="line.339"></a>
+<span class="sourceLineNo">340</span>                iList.add(new Isotope("Ruthenium-100", 100, 99.9042195));<a name="line.340"></a>
+<span class="sourceLineNo">341</span>                iList.add(new Isotope("Ruthenium-101", 101, 100.9055821));<a name="line.341"></a>
+<span class="sourceLineNo">342</span>                iList.add(new Isotope("Ruthenium-102", 102, 101.9043493));<a name="line.342"></a>
+<span class="sourceLineNo">343</span>                iList.add(new Isotope("Ruthenium-104", 104, 103.905433));<a name="line.343"></a>
+<span class="sourceLineNo">344</span>                ruthenium.setIsotopes(iList);<a name="line.344"></a>
+<span class="sourceLineNo">345</span><a name="line.345"></a>
+<span class="sourceLineNo">346</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.346"></a>
+<span class="sourceLineNo">347</span>                Element rhodium = new Element("Rhodium", "Rh", 45, null, 102.9055);<a name="line.347"></a>
+<span class="sourceLineNo">348</span>                iList.add(new Isotope("Rhodium-103", 103, 102.905504));<a name="line.348"></a>
+<span class="sourceLineNo">349</span>                rhodium.setIsotopes(iList);<a name="line.349"></a>
+<span class="sourceLineNo">350</span><a name="line.350"></a>
+<span class="sourceLineNo">351</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.351"></a>
+<span class="sourceLineNo">352</span>                Element palladium = new Element("Palladium", "Pd", 46, null, 106.42);<a name="line.352"></a>
+<span class="sourceLineNo">353</span>                iList.add(new Isotope("Palladium-102", 102, 101.905609));<a name="line.353"></a>
+<span class="sourceLineNo">354</span>                iList.add(new Isotope("Palladium-104", 104, 103.904036));<a name="line.354"></a>
+<span class="sourceLineNo">355</span>                iList.add(new Isotope("Palladium-105", 105, 104.905085));<a name="line.355"></a>
+<span class="sourceLineNo">356</span>                iList.add(new Isotope("Palladium-106", 106, 105.903486));<a name="line.356"></a>
+<span class="sourceLineNo">357</span>                iList.add(new Isotope("Palladium-108", 108, 107.903892));<a name="line.357"></a>
+<span class="sourceLineNo">358</span>                iList.add(new Isotope("Palladium-110", 110, 109.905153));<a name="line.358"></a>
+<span class="sourceLineNo">359</span>                palladium.setIsotopes(iList);<a name="line.359"></a>
+<span class="sourceLineNo">360</span><a name="line.360"></a>
+<span class="sourceLineNo">361</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.361"></a>
+<span class="sourceLineNo">362</span>                Element silver = new Element("Silver", "Ag", 47, null, 107.8682);<a name="line.362"></a>
+<span class="sourceLineNo">363</span>                iList.add(new Isotope("Silver-107", 107, 106.905097));<a name="line.363"></a>
+<span class="sourceLineNo">364</span>                iList.add(new Isotope("Silver-109", 109, 108.904752));<a name="line.364"></a>
+<span class="sourceLineNo">365</span>                silver.setIsotopes(iList);<a name="line.365"></a>
+<span class="sourceLineNo">366</span><a name="line.366"></a>
+<span class="sourceLineNo">367</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.367"></a>
+<span class="sourceLineNo">368</span>                Element cadmium = new Element("Cadmium", "Cd", 48, null, 112.411);<a name="line.368"></a>
+<span class="sourceLineNo">369</span>                iList.add(new Isotope("Cadmium-106", 106, 105.906459));<a name="line.369"></a>
+<span class="sourceLineNo">370</span>                iList.add(new Isotope("Cadmium-108", 108, 107.904184));<a name="line.370"></a>
+<span class="sourceLineNo">371</span>                iList.add(new Isotope("Cadmium-110", 110, 109.9030021));<a name="line.371"></a>
+<span class="sourceLineNo">372</span>                iList.add(new Isotope("Cadmium-111", 111, 110.9041781));<a name="line.372"></a>
+<span class="sourceLineNo">373</span>                iList.add(new Isotope("Cadmium-112", 112, 111.9027578));<a name="line.373"></a>
+<span class="sourceLineNo">374</span>                iList.add(new Isotope("Cadmium-113", 113, 112.9044017));<a name="line.374"></a>
+<span class="sourceLineNo">375</span>                iList.add(new Isotope("Cadmium-114", 114, 113.9033585));<a name="line.375"></a>
+<span class="sourceLineNo">376</span>                iList.add(new Isotope("Cadmium-116", 116, 115.904756));<a name="line.376"></a>
+<span class="sourceLineNo">377</span>                cadmium.setIsotopes(iList);<a name="line.377"></a>
+<span class="sourceLineNo">378</span><a name="line.378"></a>
+<span class="sourceLineNo">379</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.379"></a>
+<span class="sourceLineNo">380</span>                Element indium = new Element("Indium", "In", 49, null, 114.818);<a name="line.380"></a>
+<span class="sourceLineNo">381</span>                iList.add(new Isotope("Indium-113", 113, 112.904058));<a name="line.381"></a>
+<span class="sourceLineNo">382</span>                iList.add(new Isotope("Indium-115", 115, 114.903878));<a name="line.382"></a>
+<span class="sourceLineNo">383</span>                indium.setIsotopes(iList);<a name="line.383"></a>
+<span class="sourceLineNo">384</span><a name="line.384"></a>
+<span class="sourceLineNo">385</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.385"></a>
+<span class="sourceLineNo">386</span>                Element tin = new Element("Tin", "Sn", 50, null, 118.71);<a name="line.386"></a>
+<span class="sourceLineNo">387</span>                iList.add(new Isotope("Tin-112", 112, 111.904818));<a name="line.387"></a>
+<span class="sourceLineNo">388</span>                iList.add(new Isotope("Tin-114", 114, 113.902779));<a name="line.388"></a>
+<span class="sourceLineNo">389</span>                iList.add(new Isotope("Tin-115", 115, 114.903342));<a name="line.389"></a>
+<span class="sourceLineNo">390</span>                iList.add(new Isotope("Tin-116", 116, 115.901741));<a name="line.390"></a>
+<span class="sourceLineNo">391</span>                iList.add(new Isotope("Tin-117", 117, 116.902952));<a name="line.391"></a>
+<span class="sourceLineNo">392</span>                iList.add(new Isotope("Tin-118", 118, 117.901603));<a name="line.392"></a>
+<span class="sourceLineNo">393</span>                iList.add(new Isotope("Tin-119", 119, 118.903308));<a name="line.393"></a>
+<span class="sourceLineNo">394</span>                iList.add(new Isotope("Tin-120", 120, 119.9021947));<a name="line.394"></a>
+<span class="sourceLineNo">395</span>                iList.add(new Isotope("Tin-122", 122, 121.903439));<a name="line.395"></a>
+<span class="sourceLineNo">396</span>                iList.add(new Isotope("Tin-124", 124, 123.9052739));<a name="line.396"></a>
+<span class="sourceLineNo">397</span>                tin.setIsotopes(iList);<a name="line.397"></a>
+<span class="sourceLineNo">398</span><a name="line.398"></a>
+<span class="sourceLineNo">399</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.399"></a>
+<span class="sourceLineNo">400</span>                Element antimony = new Element("Antimony", "Sb", 51, null, 121.76);<a name="line.400"></a>
+<span class="sourceLineNo">401</span>                iList.add(new Isotope("Antimony-121", 121, 120.9038157));<a name="line.401"></a>
+<span class="sourceLineNo">402</span>                iList.add(new Isotope("Antimony-123", 123, 122.904214));<a name="line.402"></a>
+<span class="sourceLineNo">403</span>                antimony.setIsotopes(iList);<a name="line.403"></a>
+<span class="sourceLineNo">404</span><a name="line.404"></a>
+<span class="sourceLineNo">405</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.405"></a>
+<span class="sourceLineNo">406</span>                Element tellurium = new Element("Tellurium", "Te", 52, null, 127.6);<a name="line.406"></a>
+<span class="sourceLineNo">407</span>                iList.add(new Isotope("Tellurium-120", 120, 119.90402));<a name="line.407"></a>
+<span class="sourceLineNo">408</span>                iList.add(new Isotope("Tellurium-122", 122, 121.9030439));<a name="line.408"></a>
+<span class="sourceLineNo">409</span>                iList.add(new Isotope("Tellurium-123", 123, 122.90427));<a name="line.409"></a>
+<span class="sourceLineNo">410</span>                iList.add(new Isotope("Tellurium-124", 124, 123.9028179));<a name="line.410"></a>
+<span class="sourceLineNo">411</span>                iList.add(new Isotope("Tellurium-125", 125, 124.9044307));<a name="line.411"></a>
+<span class="sourceLineNo">412</span>                iList.add(new Isotope("Tellurium-126", 126, 125.9033117));<a name="line.412"></a>
+<span class="sourceLineNo">413</span>                iList.add(new Isotope("Tellurium-128", 128, 127.9044631));<a name="line.413"></a>
+<span class="sourceLineNo">414</span>                iList.add(new Isotope("Tellurium-130", 130, 129.9062244));<a name="line.414"></a>
+<span class="sourceLineNo">415</span>                tellurium.setIsotopes(iList);<a name="line.415"></a>
+<span class="sourceLineNo">416</span><a name="line.416"></a>
+<span class="sourceLineNo">417</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.417"></a>
+<span class="sourceLineNo">418</span>                Element iodine = new Element("Iodine", "I", 53, null, 126.90447);<a name="line.418"></a>
+<span class="sourceLineNo">419</span>                iList.add(new Isotope("Iodine-127", 127, 126.904473));<a name="line.419"></a>
+<span class="sourceLineNo">420</span>                iodine.setIsotopes(iList);<a name="line.420"></a>
+<span class="sourceLineNo">421</span><a name="line.421"></a>
+<span class="sourceLineNo">422</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.422"></a>
+<span class="sourceLineNo">423</span>                Element xenon = new Element("Xenon", "Xe", 54, null, 131.293);<a name="line.423"></a>
+<span class="sourceLineNo">424</span>                iList.add(new Isotope("Xenon-124", 124, 123.905893));<a name="line.424"></a>
+<span class="sourceLineNo">425</span>                iList.add(new Isotope("Xenon-126", 126, 125.904274));<a name="line.425"></a>
+<span class="sourceLineNo">426</span>                iList.add(new Isotope("Xenon-128", 128, 127.9035313));<a name="line.426"></a>
+<span class="sourceLineNo">427</span>                iList.add(new Isotope("Xenon-129", 129, 128.9047794));<a name="line.427"></a>
+<span class="sourceLineNo">428</span>                iList.add(new Isotope("Xenon-130", 130, 129.903508));<a name="line.428"></a>
+<span class="sourceLineNo">429</span>                iList.add(new Isotope("Xenon-131", 131, 130.9050824));<a name="line.429"></a>
+<span class="sourceLineNo">430</span>                iList.add(new Isotope("Xenon-132", 132, 131.9041535));<a name="line.430"></a>
+<span class="sourceLineNo">431</span>                iList.add(new Isotope("Xenon-134", 134, 133.9053945));<a name="line.431"></a>
+<span class="sourceLineNo">432</span>                iList.add(new Isotope("Xenon-136", 136, 135.907219));<a name="line.432"></a>
+<span class="sourceLineNo">433</span>                xenon.setIsotopes(iList);<a name="line.433"></a>
+<span class="sourceLineNo">434</span><a name="line.434"></a>
+<span class="sourceLineNo">435</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.435"></a>
+<span class="sourceLineNo">436</span>                Element caesium = new Element("Caesium", "Cs", 55, null, 132.9054519);<a name="line.436"></a>
+<span class="sourceLineNo">437</span>                iList.add(new Isotope("Caesium-133", 133, 132.905451933));<a name="line.437"></a>
+<span class="sourceLineNo">438</span>                caesium.setIsotopes(iList);<a name="line.438"></a>
+<span class="sourceLineNo">439</span><a name="line.439"></a>
+<span class="sourceLineNo">440</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.440"></a>
+<span class="sourceLineNo">441</span>                Element barium = new Element("Barium", "Ba", 56, null, 137.327);<a name="line.441"></a>
+<span class="sourceLineNo">442</span>                iList.add(new Isotope("Barium-130", 130, 129.9063208));<a name="line.442"></a>
+<span class="sourceLineNo">443</span>                iList.add(new Isotope("Barium-132", 132, 131.9050613));<a name="line.443"></a>
+<span class="sourceLineNo">444</span>                iList.add(new Isotope("Barium-134", 134, 133.9045084));<a name="line.444"></a>
+<span class="sourceLineNo">445</span>                iList.add(new Isotope("Barium-135", 135, 134.9056886));<a name="line.445"></a>
+<span class="sourceLineNo">446</span>                iList.add(new Isotope("Barium-136", 136, 135.9045759));<a name="line.446"></a>
+<span class="sourceLineNo">447</span>                iList.add(new Isotope("Barium-137", 137, 136.9058274));<a name="line.447"></a>
+<span class="sourceLineNo">448</span>                iList.add(new Isotope("Barium-138", 138, 137.9052472));<a name="line.448"></a>
+<span class="sourceLineNo">449</span>                barium.setIsotopes(iList);<a name="line.449"></a>
+<span class="sourceLineNo">450</span><a name="line.450"></a>
+<span class="sourceLineNo">451</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.451"></a>
+<span class="sourceLineNo">452</span>                Element lanthanum = new Element("Lanthanum", "La", 57, null, 138.90547);<a name="line.452"></a>
+<span class="sourceLineNo">453</span>                iList.add(new Isotope("Lanthanum-138", 138, 137.907112));<a name="line.453"></a>
+<span class="sourceLineNo">454</span>                iList.add(new Isotope("Lanthanum-139", 139, 138.9063533));<a name="line.454"></a>
+<span class="sourceLineNo">455</span>                lanthanum.setIsotopes(iList);<a name="line.455"></a>
+<span class="sourceLineNo">456</span><a name="line.456"></a>
+<span class="sourceLineNo">457</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.457"></a>
+<span class="sourceLineNo">458</span>                Element cerium = new Element("Cerium", "Ce", 58, null, 140.116);<a name="line.458"></a>
+<span class="sourceLineNo">459</span>                iList.add(new Isotope("Cerium-136", 136, 135.907172));<a name="line.459"></a>
+<span class="sourceLineNo">460</span>                iList.add(new Isotope("Cerium-138", 138, 137.905991));<a name="line.460"></a>
+<span class="sourceLineNo">461</span>                iList.add(new Isotope("Cerium-140", 140, 139.9054387));<a name="line.461"></a>
+<span class="sourceLineNo">462</span>                iList.add(new Isotope("Cerium-142", 142, 141.909244));<a name="line.462"></a>
+<span class="sourceLineNo">463</span>                cerium.setIsotopes(iList);<a name="line.463"></a>
+<span class="sourceLineNo">464</span><a name="line.464"></a>
+<span class="sourceLineNo">465</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.465"></a>
+<span class="sourceLineNo">466</span>                Element praseodymium = new Element("Praseodymium", "Pr", 59, null, 140.90765);<a name="line.466"></a>
+<span class="sourceLineNo">467</span>                iList.add(new Isotope("Praseodymium-141", 141, 140.9076528));<a name="line.467"></a>
+<span class="sourceLineNo">468</span>                praseodymium.setIsotopes(iList);<a name="line.468"></a>
+<span class="sourceLineNo">469</span><a name="line.469"></a>
+<span class="sourceLineNo">470</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.470"></a>
+<span class="sourceLineNo">471</span>                Element neodymium = new Element("Neodymium", "Nd", 60, null, 144.242);<a name="line.471"></a>
+<span class="sourceLineNo">472</span>                iList.add(new Isotope("Neodymium-142", 142, 141.9077233));<a name="line.472"></a>
+<span class="sourceLineNo">473</span>                iList.add(new Isotope("Neodymium-143", 143, 142.9098143));<a name="line.473"></a>
+<span class="sourceLineNo">474</span>                iList.add(new Isotope("Neodymium-144", 144, 143.9100873));<a name="line.474"></a>
+<span class="sourceLineNo">475</span>                iList.add(new Isotope("Neodymium-145", 145, 144.9125736));<a name="line.475"></a>
+<span class="sourceLineNo">476</span>                iList.add(new Isotope("Neodymium-146", 146, 145.9131169));<a name="line.476"></a>
+<span class="sourceLineNo">477</span>                iList.add(new Isotope("Neodymium-148", 148, 147.916893));<a name="line.477"></a>
+<span class="sourceLineNo">478</span>                iList.add(new Isotope("Neodymium-150", 150, 149.920891));<a name="line.478"></a>
+<span class="sourceLineNo">479</span>                neodymium.setIsotopes(iList);<a name="line.479"></a>
+<span class="sourceLineNo">480</span><a name="line.480"></a>
+<span class="sourceLineNo">481</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.481"></a>
+<span class="sourceLineNo">482</span>                Element promethium = new Element("Promethium", "Pm", 61, null, 145.0);<a name="line.482"></a>
+<span class="sourceLineNo">483</span>                iList.add(new Isotope("Promethium-145", 145, 144.912749));<a name="line.483"></a>
+<span class="sourceLineNo">484</span>                iList.add(new Isotope("Promethium-147", 147, 146.9151385));<a name="line.484"></a>
+<span class="sourceLineNo">485</span>                promethium.setIsotopes(iList);<a name="line.485"></a>
+<span class="sourceLineNo">486</span><a name="line.486"></a>
+<span class="sourceLineNo">487</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.487"></a>
+<span class="sourceLineNo">488</span>                Element samarium = new Element("Samarium", "Sm", 62, null, 150.36);<a name="line.488"></a>
+<span class="sourceLineNo">489</span>                iList.add(new Isotope("Samarium-144", 144, 143.911999));<a name="line.489"></a>
+<span class="sourceLineNo">490</span>                iList.add(new Isotope("Samarium-147", 147, 146.9148979));<a name="line.490"></a>
+<span class="sourceLineNo">491</span>                iList.add(new Isotope("Samarium-148", 148, 147.9148227));<a name="line.491"></a>
+<span class="sourceLineNo">492</span>                iList.add(new Isotope("Samarium-149", 149, 148.9171847));<a name="line.492"></a>
+<span class="sourceLineNo">493</span>                iList.add(new Isotope("Samarium-150", 150, 149.9172755));<a name="line.493"></a>
+<span class="sourceLineNo">494</span>                iList.add(new Isotope("Samarium-152", 152, 151.9197324));<a name="line.494"></a>
+<span class="sourceLineNo">495</span>                iList.add(new Isotope("Samarium-154", 154, 153.9222093));<a name="line.495"></a>
+<span class="sourceLineNo">496</span>                samarium.setIsotopes(iList);<a name="line.496"></a>
+<span class="sourceLineNo">497</span><a name="line.497"></a>
+<span class="sourceLineNo">498</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.498"></a>
+<span class="sourceLineNo">499</span>                Element europium = new Element("Europium", "Eu", 63, null, 151.964);<a name="line.499"></a>
+<span class="sourceLineNo">500</span>                iList.add(new Isotope("Europium-151", 151, 150.9198502));<a name="line.500"></a>
+<span class="sourceLineNo">501</span>                iList.add(new Isotope("Europium-153", 153, 152.9212303));<a name="line.501"></a>
+<span class="sourceLineNo">502</span>                europium.setIsotopes(iList);<a name="line.502"></a>
+<span class="sourceLineNo">503</span><a name="line.503"></a>
+<span class="sourceLineNo">504</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.504"></a>
+<span class="sourceLineNo">505</span>                Element gadolinium = new Element("Gadolinium", "Gd", 64, null, 157.25);<a name="line.505"></a>
+<span class="sourceLineNo">506</span>                iList.add(new Isotope("Gadolinium-152", 152, 151.919791));<a name="line.506"></a>
+<span class="sourceLineNo">507</span>                iList.add(new Isotope("Gadolinium-154", 154, 153.9208656));<a name="line.507"></a>
+<span class="sourceLineNo">508</span>                iList.add(new Isotope("Gadolinium-155", 155, 154.922622));<a name="line.508"></a>
+<span class="sourceLineNo">509</span>                iList.add(new Isotope("Gadolinium-156", 156, 155.9221227));<a name="line.509"></a>
+<span class="sourceLineNo">510</span>                iList.add(new Isotope("Gadolinium-157", 157, 156.9239601));<a name="line.510"></a>
+<span class="sourceLineNo">511</span>                iList.add(new Isotope("Gadolinium-158", 158, 157.9241039));<a name="line.511"></a>
+<span class="sourceLineNo">512</span>                iList.add(new Isotope("Gadolinium-160", 160, 159.9270541));<a name="line.512"></a>
+<span class="sourceLineNo">513</span>                gadolinium.setIsotopes(iList);<a name="line.513"></a>
+<span class="sourceLineNo">514</span><a name="line.514"></a>
+<span class="sourceLineNo">515</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.515"></a>
+<span class="sourceLineNo">516</span>                Element terbium = new Element("Terbium", "Tb", 65, null, 158.92535);<a name="line.516"></a>
+<span class="sourceLineNo">517</span>                iList.add(new Isotope("Terbium-159", 159, 158.9253468));<a name="line.517"></a>
+<span class="sourceLineNo">518</span>                terbium.setIsotopes(iList);<a name="line.518"></a>
+<span class="sourceLineNo">519</span><a name="line.519"></a>
+<span class="sourceLineNo">520</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.520"></a>
+<span class="sourceLineNo">521</span>                Element dysprosium = new Element("Dysprosium", "Dy", 66, null, 162.5);<a name="line.521"></a>
+<span class="sourceLineNo">522</span>                iList.add(new Isotope("Dysprosium-156", 156, 155.924283));<a name="line.522"></a>
+<span class="sourceLineNo">523</span>                iList.add(new Isotope("Dysprosium-158", 158, 157.924409));<a name="line.523"></a>
+<span class="sourceLineNo">524</span>                iList.add(new Isotope("Dysprosium-160", 160, 159.9251975));<a name="line.524"></a>
+<span class="sourceLineNo">525</span>                iList.add(new Isotope("Dysprosium-161", 161, 160.9269334));<a name="line.525"></a>
+<span class="sourceLineNo">526</span>                iList.add(new Isotope("Dysprosium-162", 162, 161.9267984));<a name="line.526"></a>
+<span class="sourceLineNo">527</span>                iList.add(new Isotope("Dysprosium-163", 163, 162.9287312));<a name="line.527"></a>
+<span class="sourceLineNo">528</span>                iList.add(new Isotope("Dysprosium-164", 164, 163.9291748));<a name="line.528"></a>
+<span class="sourceLineNo">529</span>                dysprosium.setIsotopes(iList);<a name="line.529"></a>
+<span class="sourceLineNo">530</span><a name="line.530"></a>
+<span class="sourceLineNo">531</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.531"></a>
+<span class="sourceLineNo">532</span>                Element holmium = new Element("Holmium", "Ho", 67, null, 164.93032);<a name="line.532"></a>
+<span class="sourceLineNo">533</span>                iList.add(new Isotope("Holmium-165", 165, 164.9303221));<a name="line.533"></a>
+<span class="sourceLineNo">534</span>                holmium.setIsotopes(iList);<a name="line.534"></a>
+<span class="sourceLineNo">535</span><a name="line.535"></a>
+<span class="sourceLineNo">536</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.536"></a>
+<span class="sourceLineNo">537</span>                Element erbium = new Element("Erbium", "Er", 68, null, 167.259);<a name="line.537"></a>
+<span class="sourceLineNo">538</span>                iList.add(new Isotope("Erbium-162", 162, 161.928778));<a name="line.538"></a>
+<span class="sourceLineNo">539</span>                iList.add(new Isotope("Erbium-164", 164, 163.9292));<a name="line.539"></a>
+<span class="sourceLineNo">540</span>                iList.add(new Isotope("Erbium-166", 166, 165.9302931));<a name="line.540"></a>
+<span class="sourceLineNo">541</span>                iList.add(new Isotope("Erbium-167", 167, 166.9320482));<a name="line.541"></a>
+<span class="sourceLineNo">542</span>                iList.add(new Isotope("Erbium-168", 168, 167.9323702));<a name="line.542"></a>
+<span class="sourceLineNo">543</span>                iList.add(new Isotope("Erbium-170", 170, 169.9354643));<a name="line.543"></a>
+<span class="sourceLineNo">544</span>                erbium.setIsotopes(iList);<a name="line.544"></a>
+<span class="sourceLineNo">545</span><a name="line.545"></a>
+<span class="sourceLineNo">546</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.546"></a>
+<span class="sourceLineNo">547</span>                Element thulium = new Element("Thulium", "Tm", 69, null, 168.93421);<a name="line.547"></a>
+<span class="sourceLineNo">548</span>                iList.add(new Isotope("Thulium-169", 169, 168.9342133));<a name="line.548"></a>
+<span class="sourceLineNo">549</span>                thulium.setIsotopes(iList);<a name="line.549"></a>
+<span class="sourceLineNo">550</span><a name="line.550"></a>
+<span class="sourceLineNo">551</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.551"></a>
+<span class="sourceLineNo">552</span>                Element ytterbium = new Element("Ytterbium", "Yb", 70, null, 173.054);<a name="line.552"></a>
+<span class="sourceLineNo">553</span>                iList.add(new Isotope("Ytterbium-168", 168, 167.933897));<a name="line.553"></a>
+<span class="sourceLineNo">554</span>                iList.add(new Isotope("Ytterbium-170", 170, 169.9347618));<a name="line.554"></a>
+<span class="sourceLineNo">555</span>                iList.add(new Isotope("Ytterbium-171", 171, 170.9363258));<a name="line.555"></a>
+<span class="sourceLineNo">556</span>                iList.add(new Isotope("Ytterbium-172", 172, 171.9363815));<a name="line.556"></a>
+<span class="sourceLineNo">557</span>                iList.add(new Isotope("Ytterbium-173", 173, 172.9382108));<a name="line.557"></a>
+<span class="sourceLineNo">558</span>                iList.add(new Isotope("Ytterbium-174", 174, 173.9388621));<a name="line.558"></a>
+<span class="sourceLineNo">559</span>                iList.add(new Isotope("Ytterbium-176", 176, 175.9425717));<a name="line.559"></a>
+<span class="sourceLineNo">560</span>                ytterbium.setIsotopes(iList);<a name="line.560"></a>
+<span class="sourceLineNo">561</span><a name="line.561"></a>
+<span class="sourceLineNo">562</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.562"></a>
+<span class="sourceLineNo">563</span>                Element lutetium = new Element("Lutetium", "Lu", 71, null, 174.9668);<a name="line.563"></a>
+<span class="sourceLineNo">564</span>                iList.add(new Isotope("Lutetium-175", 175, 174.9407718));<a name="line.564"></a>
+<span class="sourceLineNo">565</span>                iList.add(new Isotope("Lutetium-176", 176, 175.9426863));<a name="line.565"></a>
+<span class="sourceLineNo">566</span>                lutetium.setIsotopes(iList);<a name="line.566"></a>
+<span class="sourceLineNo">567</span><a name="line.567"></a>
+<span class="sourceLineNo">568</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.568"></a>
+<span class="sourceLineNo">569</span>                Element hafnium = new Element("Hafnium", "Hf", 72, null, 178.49);<a name="line.569"></a>
+<span class="sourceLineNo">570</span>                iList.add(new Isotope("Hafnium-174", 174, 173.940046));<a name="line.570"></a>
+<span class="sourceLineNo">571</span>                iList.add(new Isotope("Hafnium-176", 176, 175.9414086));<a name="line.571"></a>
+<span class="sourceLineNo">572</span>                iList.add(new Isotope("Hafnium-177", 177, 176.9432207));<a name="line.572"></a>
+<span class="sourceLineNo">573</span>                iList.add(new Isotope("Hafnium-178", 178, 177.9436988));<a name="line.573"></a>
+<span class="sourceLineNo">574</span>                iList.add(new Isotope("Hafnium-179", 179, 178.9458161));<a name="line.574"></a>
+<span class="sourceLineNo">575</span>                iList.add(new Isotope("Hafnium-180", 180, 179.94655));<a name="line.575"></a>
+<span class="sourceLineNo">576</span>                hafnium.setIsotopes(iList);<a name="line.576"></a>
+<span class="sourceLineNo">577</span><a name="line.577"></a>
+<span class="sourceLineNo">578</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.578"></a>
+<span class="sourceLineNo">579</span>                Element tantalum = new Element("Tantalum", "Ta", 73, null, 180.94788);<a name="line.579"></a>
+<span class="sourceLineNo">580</span>                iList.add(new Isotope("Tantalum-180", 180, 179.9474648));<a name="line.580"></a>
+<span class="sourceLineNo">581</span>                iList.add(new Isotope("Tantalum-181", 181, 180.9479958));<a name="line.581"></a>
+<span class="sourceLineNo">582</span>                tantalum.setIsotopes(iList);<a name="line.582"></a>
+<span class="sourceLineNo">583</span><a name="line.583"></a>
+<span class="sourceLineNo">584</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.584"></a>
+<span class="sourceLineNo">585</span>                Element tungsten = new Element("Tungsten", "W", 74, null, 183.84);<a name="line.585"></a>
+<span class="sourceLineNo">586</span>                iList.add(new Isotope("Tungsten-180", 180, 179.946704));<a name="line.586"></a>
+<span class="sourceLineNo">587</span>                iList.add(new Isotope("Tungsten-182", 182, 181.9482042));<a name="line.587"></a>
+<span class="sourceLineNo">588</span>                iList.add(new Isotope("Tungsten-183", 183, 182.950223));<a name="line.588"></a>
+<span class="sourceLineNo">589</span>                iList.add(new Isotope("Tungsten-184", 184, 183.9509312));<a name="line.589"></a>
+<span class="sourceLineNo">590</span>                iList.add(new Isotope("Tungsten-186", 186, 185.9543641));<a name="line.590"></a>
+<span class="sourceLineNo">591</span>                tungsten.setIsotopes(iList);<a name="line.591"></a>
+<span class="sourceLineNo">592</span><a name="line.592"></a>
+<span class="sourceLineNo">593</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.593"></a>
+<span class="sourceLineNo">594</span>                Element rhenium = new Element("Rhenium", "Re", 75, null, 186.207);<a name="line.594"></a>
+<span class="sourceLineNo">595</span>                iList.add(new Isotope("Rhenium-185", 185, 184.952955));<a name="line.595"></a>
+<span class="sourceLineNo">596</span>                iList.add(new Isotope("Rhenium-187", 187, 186.9557531));<a name="line.596"></a>
+<span class="sourceLineNo">597</span>                rhenium.setIsotopes(iList);<a name="line.597"></a>
+<span class="sourceLineNo">598</span><a name="line.598"></a>
+<span class="sourceLineNo">599</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.599"></a>
+<span class="sourceLineNo">600</span>                Element osmium = new Element("Osmium", "Os", 76, null, 190.23);<a name="line.600"></a>
+<span class="sourceLineNo">601</span>                iList.add(new Isotope("Osmium-184", 184, 183.9524891));<a name="line.601"></a>
+<span class="sourceLineNo">602</span>                iList.add(new Isotope("Osmium-186", 186, 185.9538382));<a name="line.602"></a>
+<span class="sourceLineNo">603</span>                iList.add(new Isotope("Osmium-187", 187, 186.9557505));<a name="line.603"></a>
+<span class="sourceLineNo">604</span>                iList.add(new Isotope("Osmium-188", 188, 187.9558382));<a name="line.604"></a>
+<span class="sourceLineNo">605</span>                iList.add(new Isotope("Osmium-189", 189, 188.9581475));<a name="line.605"></a>
+<span class="sourceLineNo">606</span>                iList.add(new Isotope("Osmium-190", 190, 189.958447));<a name="line.606"></a>
+<span class="sourceLineNo">607</span>                iList.add(new Isotope("Osmium-192", 192, 191.9614807));<a name="line.607"></a>
+<span class="sourceLineNo">608</span>                osmium.setIsotopes(iList);<a name="line.608"></a>
+<span class="sourceLineNo">609</span><a name="line.609"></a>
+<span class="sourceLineNo">610</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.610"></a>
+<span class="sourceLineNo">611</span>                Element iridium = new Element("Iridium", "Ir", 77, null, 192.217);<a name="line.611"></a>
+<span class="sourceLineNo">612</span>                iList.add(new Isotope("Iridium-191", 191, 190.960594));<a name="line.612"></a>
+<span class="sourceLineNo">613</span>                iList.add(new Isotope("Iridium-193", 193, 192.9629264));<a name="line.613"></a>
+<span class="sourceLineNo">614</span>                iridium.setIsotopes(iList);<a name="line.614"></a>
+<span class="sourceLineNo">615</span><a name="line.615"></a>
+<span class="sourceLineNo">616</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.616"></a>
+<span class="sourceLineNo">617</span>                Element platinum = new Element("Platinum", "Pt", 78, null, 195.084);<a name="line.617"></a>
+<span class="sourceLineNo">618</span>                iList.add(new Isotope("Platinum-190", 190, 189.959932));<a name="line.618"></a>
+<span class="sourceLineNo">619</span>                iList.add(new Isotope("Platinum-192", 192, 191.961038));<a name="line.619"></a>
+<span class="sourceLineNo">620</span>                iList.add(new Isotope("Platinum-194", 194, 193.9626803));<a name="line.620"></a>
+<span class="sourceLineNo">621</span>                iList.add(new Isotope("Platinum-195", 195, 194.9647911));<a name="line.621"></a>
+<span class="sourceLineNo">622</span>                iList.add(new Isotope("Platinum-196", 196, 195.9649515));<a name="line.622"></a>
+<span class="sourceLineNo">623</span>                iList.add(new Isotope("Platinum-198", 198, 197.967893));<a name="line.623"></a>
+<span class="sourceLineNo">624</span>                platinum.setIsotopes(iList);<a name="line.624"></a>
+<span class="sourceLineNo">625</span><a name="line.625"></a>
+<span class="sourceLineNo">626</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.626"></a>
+<span class="sourceLineNo">627</span>                Element gold = new Element("Gold", "Au", 79, null, 196.966569);<a name="line.627"></a>
+<span class="sourceLineNo">628</span>                iList.add(new Isotope("Gold-197", 197, 196.9665687));<a name="line.628"></a>
+<span class="sourceLineNo">629</span>                gold.setIsotopes(iList);<a name="line.629"></a>
+<span class="sourceLineNo">630</span><a name="line.630"></a>
+<span class="sourceLineNo">631</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.631"></a>
+<span class="sourceLineNo">632</span>                Element mercury = new Element("Mercury", "Hg", 80, null, 200.59);<a name="line.632"></a>
+<span class="sourceLineNo">633</span>                iList.add(new Isotope("Mercury-196", 196, 195.965833));<a name="line.633"></a>
+<span class="sourceLineNo">634</span>                iList.add(new Isotope("Mercury-198", 198, 197.966769));<a name="line.634"></a>
+<span class="sourceLineNo">635</span>                iList.add(new Isotope("Mercury-199", 199, 198.9682799));<a name="line.635"></a>
+<span class="sourceLineNo">636</span>                iList.add(new Isotope("Mercury-200", 200, 199.968326));<a name="line.636"></a>
+<span class="sourceLineNo">637</span>                iList.add(new Isotope("Mercury-201", 201, 200.9703023));<a name="line.637"></a>
+<span class="sourceLineNo">638</span>                iList.add(new Isotope("Mercury-202", 202, 201.970643));<a name="line.638"></a>
+<span class="sourceLineNo">639</span>                iList.add(new Isotope("Mercury-204", 204, 203.9734939));<a name="line.639"></a>
+<span class="sourceLineNo">640</span>                mercury.setIsotopes(iList);<a name="line.640"></a>
+<span class="sourceLineNo">641</span><a name="line.641"></a>
+<span class="sourceLineNo">642</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.642"></a>
+<span class="sourceLineNo">643</span>                Element thallium = new Element("Thallium", "Tl", 81, null, 204.3833);<a name="line.643"></a>
+<span class="sourceLineNo">644</span>                iList.add(new Isotope("Thallium-203", 203, 202.9723442));<a name="line.644"></a>
+<span class="sourceLineNo">645</span>                iList.add(new Isotope("Thallium-205", 205, 204.9744275));<a name="line.645"></a>
+<span class="sourceLineNo">646</span>                thallium.setIsotopes(iList);<a name="line.646"></a>
+<span class="sourceLineNo">647</span><a name="line.647"></a>
+<span class="sourceLineNo">648</span>                iList = new ArrayList&lt;Isotope&gt;();<a name="line.648"></a>
+<span class="sourceLineNo">649</span>                Element lead = new Element("Lead", "Pb", 82, null, 207.2);<a name="line.649"></a>
+<span class="sourceLineNo">650</span>                iList.add(new Isotope("Lead-204", 204, 203.9730436));<a name="line.650"></a>
+<span class="sourceLineNo">651</span>                iList.add(new Isotope("Lead-206", 206, 205.9744653));<a name="line.651"></a>
+<span class="sourceLineNo">652</span>                iList.add(new Isotope("Lead-207", 207, 206.9758969));<a name="line.652"></a>
+<span class="sourceLineNo">653</span>                iList.add(new Isotope("Lead-208", 208, 207.9766521));<a name="line.653"></a>
+<span class="sourceLineNo">654</span>                lead.setIsotopes(iList);<a name="line.654"></a>
+<span class="sourceLineNo">655</span><a name="line.655"></a>
+<span class="sourceLineNo">656</span>                List&lt;Element&gt; eList = new ArrayList&lt;Element&gt;();<a name="line.656"></a>
+<span class="sourceLineNo">657</span>                eList.add(hydrogen);<a name="line.657"></a>
+<span class="sourceLineNo">658</span>                eList.add(helium);<a name="line.658"></a>
+<span class="sourceLineNo">659</span>                eList.add(lithium);<a name="line.659"></a>
+<span class="sourceLineNo">660</span>                eList.add(beryllium);<a name="line.660"></a>
+<span class="sourceLineNo">661</span>                eList.add(boron);<a name="line.661"></a>
+<span class="sourceLineNo">662</span>                eList.add(carbon);<a name="line.662"></a>
+<span class="sourceLineNo">663</span>                eList.add(nitrogen);<a name="line.663"></a>
+<span class="sourceLineNo">664</span>                eList.add(oxygen);<a name="line.664"></a>
+<span class="sourceLineNo">665</span>                eList.add(fluorine);<a name="line.665"></a>
+<span class="sourceLineNo">666</span>                eList.add(neon);<a name="line.666"></a>
+<span class="sourceLineNo">667</span>                eList.add(sodium);<a name="line.667"></a>
+<span class="sourceLineNo">668</span>                eList.add(magnesium);<a name="line.668"></a>
+<span class="sourceLineNo">669</span>                eList.add(aluminium);<a name="line.669"></a>
+<span class="sourceLineNo">670</span>                eList.add(silicon);<a name="line.670"></a>
+<span class="sourceLineNo">671</span>                eList.add(phosphorus);<a name="line.671"></a>
+<span class="sourceLineNo">672</span>                eList.add(sulfur);<a name="line.672"></a>
+<span class="sourceLineNo">673</span>                eList.add(chlorine);<a name="line.673"></a>
+<span class="sourceLineNo">674</span>                eList.add(argon);<a name="line.674"></a>
+<span class="sourceLineNo">675</span>                eList.add(potassium);<a name="line.675"></a>
+<span class="sourceLineNo">676</span>                eList.add(calcium);<a name="line.676"></a>
+<span class="sourceLineNo">677</span>                eList.add(scandium);<a name="line.677"></a>
+<span class="sourceLineNo">678</span>                eList.add(titanium);<a name="line.678"></a>
+<span class="sourceLineNo">679</span>                eList.add(vanadium);<a name="line.679"></a>
+<span class="sourceLineNo">680</span>                eList.add(chromium);<a name="line.680"></a>
+<span class="sourceLineNo">681</span>                eList.add(manganese);<a name="line.681"></a>
+<span class="sourceLineNo">682</span>                eList.add(iron);<a name="line.682"></a>
+<span class="sourceLineNo">683</span>                eList.add(cobalt);<a name="line.683"></a>
+<span class="sourceLineNo">684</span>                eList.add(nickel);<a name="line.684"></a>
+<span class="sourceLineNo">685</span>                eList.add(copper);<a name="line.685"></a>
+<span class="sourceLineNo">686</span>                eList.add(zinc);<a name="line.686"></a>
+<span class="sourceLineNo">687</span>                eList.add(gallium);<a name="line.687"></a>
+<span class="sourceLineNo">688</span>                eList.add(germanium);<a name="line.688"></a>
+<span class="sourceLineNo">689</span>                eList.add(arsenic);<a name="line.689"></a>
+<span class="sourceLineNo">690</span>                eList.add(selenium);<a name="line.690"></a>
+<span class="sourceLineNo">691</span>                eList.add(bromine);<a name="line.691"></a>
+<span class="sourceLineNo">692</span>                eList.add(krypton);<a name="line.692"></a>
+<span class="sourceLineNo">693</span>                eList.add(rubidium);<a name="line.693"></a>
+<span class="sourceLineNo">694</span>                eList.add(strontium);<a name="line.694"></a>
+<span class="sourceLineNo">695</span>                eList.add(yttrium);<a name="line.695"></a>
+<span class="sourceLineNo">696</span>                eList.add(zirconium);<a name="line.696"></a>
+<span class="sourceLineNo">697</span>                eList.add(niobium);<a name="line.697"></a>
+<span class="sourceLineNo">698</span>                eList.add(molybdenum);<a name="line.698"></a>
+<span class="sourceLineNo">699</span>                eList.add(technetium);<a name="line.699"></a>
+<span class="sourceLineNo">700</span>                eList.add(ruthenium);<a name="line.700"></a>
+<span class="sourceLineNo">701</span>                eList.add(rhodium);<a name="line.701"></a>
+<span class="sourceLineNo">702</span>                eList.add(palladium);<a name="line.702"></a>
+<span class="sourceLineNo">703</span>                eList.add(silver);<a name="line.703"></a>
+<span class="sourceLineNo">704</span>                eList.add(cadmium);<a name="line.704"></a>
+<span class="sourceLineNo">705</span>                eList.add(indium);<a name="line.705"></a>
+<span class="sourceLineNo">706</span>                eList.add(tin);<a name="line.706"></a>
+<span class="sourceLineNo">707</span>                eList.add(antimony);<a name="line.707"></a>
+<span class="sourceLineNo">708</span>                eList.add(tellurium);<a name="line.708"></a>
+<span class="sourceLineNo">709</span>                eList.add(iodine);<a name="line.709"></a>
+<span class="sourceLineNo">710</span>                eList.add(xenon);<a name="line.710"></a>
+<span class="sourceLineNo">711</span>                eList.add(caesium);<a name="line.711"></a>
+<span class="sourceLineNo">712</span>                eList.add(barium);<a name="line.712"></a>
+<span class="sourceLineNo">713</span>                eList.add(lanthanum);<a name="line.713"></a>
+<span class="sourceLineNo">714</span>                eList.add(cerium);<a name="line.714"></a>
+<span class="sourceLineNo">715</span>                eList.add(praseodymium);<a name="line.715"></a>
+<span class="sourceLineNo">716</span>                eList.add(neodymium);<a name="line.716"></a>
+<span class="sourceLineNo">717</span>                eList.add(promethium);<a name="line.717"></a>
+<span class="sourceLineNo">718</span>                eList.add(samarium);<a name="line.718"></a>
+<span class="sourceLineNo">719</span>                eList.add(europium);<a name="line.719"></a>
+<span class="sourceLineNo">720</span>                eList.add(gadolinium);<a name="line.720"></a>
+<span class="sourceLineNo">721</span>                eList.add(terbium);<a name="line.721"></a>
+<span class="sourceLineNo">722</span>                eList.add(dysprosium);<a name="line.722"></a>
+<span class="sourceLineNo">723</span>                eList.add(holmium);<a name="line.723"></a>
+<span class="sourceLineNo">724</span>                eList.add(erbium);<a name="line.724"></a>
+<span class="sourceLineNo">725</span>                eList.add(thulium);<a name="line.725"></a>
+<span class="sourceLineNo">726</span>                eList.add(ytterbium);<a name="line.726"></a>
+<span class="sourceLineNo">727</span>                eList.add(lutetium);<a name="line.727"></a>
+<span class="sourceLineNo">728</span>                eList.add(hafnium);<a name="line.728"></a>
+<span class="sourceLineNo">729</span>                eList.add(tantalum);<a name="line.729"></a>
+<span class="sourceLineNo">730</span>                eList.add(tungsten);<a name="line.730"></a>
+<span class="sourceLineNo">731</span>                eList.add(rhenium);<a name="line.731"></a>
+<span class="sourceLineNo">732</span>                eList.add(osmium);<a name="line.732"></a>
+<span class="sourceLineNo">733</span>                eList.add(iridium);<a name="line.733"></a>
+<span class="sourceLineNo">734</span>                eList.add(platinum);<a name="line.734"></a>
+<span class="sourceLineNo">735</span>                eList.add(gold);<a name="line.735"></a>
+<span class="sourceLineNo">736</span>                eList.add(mercury);<a name="line.736"></a>
+<span class="sourceLineNo">737</span>                eList.add(thallium);<a name="line.737"></a>
+<span class="sourceLineNo">738</span>                eList.add(lead);<a name="line.738"></a>
+<span class="sourceLineNo">739</span><a name="line.739"></a>
+<span class="sourceLineNo">740</span>                ElementTable iTable = new ElementTable(eList);<a name="line.740"></a>
+<span class="sourceLineNo">741</span>                // Get a JAXB Context for the object we created above<a name="line.741"></a>
+<span class="sourceLineNo">742</span>                JAXBContext context = JAXBContext.newInstance(iTable.getClass());<a name="line.742"></a>
+<span class="sourceLineNo">743</span>                // To convert ex to XML, I need a JAXB Marshaller<a name="line.743"></a>
+<span class="sourceLineNo">744</span>                Marshaller marshaller = context.createMarshaller();<a name="line.744"></a>
+<span class="sourceLineNo">745</span>                // Make the output pretty<a name="line.745"></a>
+<span class="sourceLineNo">746</span>                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);<a name="line.746"></a>
+<span class="sourceLineNo">747</span>                StringWriter sw = new StringWriter();<a name="line.747"></a>
+<span class="sourceLineNo">748</span>                // marshall the object to XML<a name="line.748"></a>
+<span class="sourceLineNo">749</span>                marshaller.marshal(iTable, sw);<a name="line.749"></a>
+<span class="sourceLineNo">750</span>                // print it out for this example<a name="line.750"></a>
+<span class="sourceLineNo">751</span>                System.out.println(sw.toString());<a name="line.751"></a>
+<span class="sourceLineNo">752</span>                BufferedWriter output = new BufferedWriter(new FileWriter("./src/main/resources/ElementMass.xml"));<a name="line.752"></a>
+<span class="sourceLineNo">753</span>                output.write(sw.toString());<a name="line.753"></a>
+<span class="sourceLineNo">754</span>                output.close();<a name="line.754"></a>
+<span class="sourceLineNo">755</span>        }<a name="line.755"></a>
+<span class="sourceLineNo">756</span><a name="line.756"></a>
+<span class="sourceLineNo">757</span>}<a name="line.757"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

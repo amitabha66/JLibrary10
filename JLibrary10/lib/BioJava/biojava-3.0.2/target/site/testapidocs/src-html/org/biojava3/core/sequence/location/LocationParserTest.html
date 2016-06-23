@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package org.biojava3.core.sequence.location;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import org.biojava3.core.sequence.AccessionID;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import org.biojava3.core.sequence.Strand;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import org.biojava3.core.sequence.location.template.Location;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import org.junit.Assert;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import org.junit.Test;<a name="line.7"></a>
+<span class="sourceLineNo">008</span><a name="line.8"></a>
+<span class="sourceLineNo">009</span>public class LocationParserTest {<a name="line.9"></a>
+<span class="sourceLineNo">010</span><a name="line.10"></a>
+<span class="sourceLineNo">011</span>    public static final InsdcParser PARSER = new InsdcParser();<a name="line.11"></a>
+<span class="sourceLineNo">012</span><a name="line.12"></a>
+<span class="sourceLineNo">013</span>    @Test<a name="line.13"></a>
+<span class="sourceLineNo">014</span>    public void basicLocationTests() {<a name="line.14"></a>
+<span class="sourceLineNo">015</span>        assertInsdcLoc("1", new SimpleLocation(1, 1, Strand.POSITIVE));<a name="line.15"></a>
+<span class="sourceLineNo">016</span><a name="line.16"></a>
+<span class="sourceLineNo">017</span>        assertInsdcLoc("1..10", new SimpleLocation(1, 10, Strand.POSITIVE));<a name="line.17"></a>
+<span class="sourceLineNo">018</span>        assertInsdcLoc("1^2", new SimpleLocation(<a name="line.18"></a>
+<span class="sourceLineNo">019</span>                new SimplePoint(1),<a name="line.19"></a>
+<span class="sourceLineNo">020</span>                new SimplePoint(2),<a name="line.20"></a>
+<span class="sourceLineNo">021</span>                Strand.POSITIVE, false, true));<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>        assertInsdcLoc("complement(1..10)", new SimpleLocation(1, 10, Strand.NEGATIVE));<a name="line.23"></a>
+<span class="sourceLineNo">024</span><a name="line.24"></a>
+<span class="sourceLineNo">025</span>        assertInsdcLoc("join(1..2,7..8)", new SimpleLocation(<a name="line.25"></a>
+<span class="sourceLineNo">026</span>                new SimplePoint(1), new SimplePoint(8), Strand.POSITIVE,<a name="line.26"></a>
+<span class="sourceLineNo">027</span>                new SimpleLocation(1, 2, Strand.POSITIVE),<a name="line.27"></a>
+<span class="sourceLineNo">028</span>                new SimpleLocation(7, 8, Strand.POSITIVE)));<a name="line.28"></a>
+<span class="sourceLineNo">029</span><a name="line.29"></a>
+<span class="sourceLineNo">030</span>        assertInsdcLoc("complement(join(1..2,7..8))", new SimpleLocation(<a name="line.30"></a>
+<span class="sourceLineNo">031</span>                new SimplePoint(1), new SimplePoint(8), Strand.NEGATIVE,<a name="line.31"></a>
+<span class="sourceLineNo">032</span>                new SimpleLocation(1, 2, Strand.NEGATIVE),<a name="line.32"></a>
+<span class="sourceLineNo">033</span>                new SimpleLocation(7, 8, Strand.NEGATIVE)));<a name="line.33"></a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span>        //Reverse relationship<a name="line.35"></a>
+<span class="sourceLineNo">036</span>        assertInsdcLoc("join(complement(1..2),complement(7..8))", new SimpleLocation(<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                new SimplePoint(1), new SimplePoint(8), Strand.NEGATIVE,<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                new SimpleLocation(1, 2, Strand.NEGATIVE),<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                new SimpleLocation(7, 8, Strand.NEGATIVE)));<a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>        //Complex sub relations<a name="line.41"></a>
+<span class="sourceLineNo">042</span>        assertInsdcLoc("join(1..2,join(4..5,complement(6..8))", new SimpleLocation(<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                new SimplePoint(1), new SimplePoint(8), Strand.UNDEFINED,<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                new SimpleLocation(1, 2, Strand.POSITIVE),<a name="line.44"></a>
+<span class="sourceLineNo">045</span>                new SimpleLocation(4, 8, Strand.UNDEFINED,<a name="line.45"></a>
+<span class="sourceLineNo">046</span>                new SimpleLocation(4, 5, Strand.POSITIVE),<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                new SimpleLocation(6, 8, Strand.NEGATIVE))));<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>        assertInsdcLoc("join(5..10,1..3)", new SimpleLocation(<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                new SimplePoint(5), new SimplePoint(13), Strand.POSITIVE,<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                true, //Circular genome<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                new SimpleLocation(5, 10, Strand.POSITIVE),<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                new SimpleLocation(1, 3, Strand.POSITIVE)));<a name="line.53"></a>
+<span class="sourceLineNo">054</span><a name="line.54"></a>
+<span class="sourceLineNo">055</span>        assertInsdcLoc("order(1..2,7..8)", new InsdcLocations.OrderLocation(<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                new SimplePoint(1), new SimplePoint(8), Strand.POSITIVE,<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                new SimpleLocation(1, 2, Strand.POSITIVE),<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                new SimpleLocation(7, 8, Strand.POSITIVE)));<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    }<a name="line.59"></a>
+<span class="sourceLineNo">060</span><a name="line.60"></a>
+<span class="sourceLineNo">061</span>    @Test<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    public void moreComplex() {<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        assertInsdcLoc("complement(order(1,2..34,complement(34..45),A00001.5:34..45))",<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                new InsdcLocations.OrderLocation(<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                    new SimplePoint(1), new SimplePoint(45), Strand.UNDEFINED,<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                    new SimpleLocation(1, 1, Strand.NEGATIVE),<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                    new SimpleLocation(2, 34, Strand.NEGATIVE),<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                    new SimpleLocation(34, 45, Strand.POSITIVE),<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                    new SimpleLocation(<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                    new SimplePoint(34), new SimplePoint(45),<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                    Strand.NEGATIVE,<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                    new AccessionID("A00001.5", PARSER.getDataSource()))));<a name="line.72"></a>
+<span class="sourceLineNo">073</span>    }<a name="line.73"></a>
+<span class="sourceLineNo">074</span><a name="line.74"></a>
+<span class="sourceLineNo">075</span>    public void assertInsdcLoc(String stringLoc, Location expected) {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        Location actual = PARSER.parse(stringLoc);<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        Assert.assertEquals("Asserting locations are the same", expected, actual);<a name="line.77"></a>
+<span class="sourceLineNo">078</span>    }<a name="line.78"></a>
+<span class="sourceLineNo">079</span>}<a name="line.79"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

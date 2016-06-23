@@ -1,0 +1,353 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package org.biojava.bio.structure;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.io.IOException;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.io.InputStream;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.util.List;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.util.Map;<a name="line.6"></a>
+<span class="sourceLineNo">007</span><a name="line.7"></a>
+<span class="sourceLineNo">008</span>import junit.framework.TestCase;<a name="line.8"></a>
+<span class="sourceLineNo">009</span><a name="line.9"></a>
+<span class="sourceLineNo">010</span>import org.biojava.bio.structure.io.FileParsingParameters;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import org.biojava.bio.structure.io.PDBFileParser;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import org.biojava.bio.structure.jama.Matrix;<a name="line.12"></a>
+<span class="sourceLineNo">013</span><a name="line.13"></a>
+<span class="sourceLineNo">014</span><a name="line.14"></a>
+<span class="sourceLineNo">015</span>/**<a name="line.15"></a>
+<span class="sourceLineNo">016</span> *<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * @author Andreas Prlic<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * @since 1.5<a name="line.18"></a>
+<span class="sourceLineNo">019</span> */<a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span><a name="line.21"></a>
+<span class="sourceLineNo">022</span>public class StructureTest extends TestCase {<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>        Structure structure;<a name="line.24"></a>
+<span class="sourceLineNo">025</span><a name="line.25"></a>
+<span class="sourceLineNo">026</span>        protected void setUp()<a name="line.26"></a>
+<span class="sourceLineNo">027</span>        {<a name="line.27"></a>
+<span class="sourceLineNo">028</span>                InputStream inStream = this.getClass().getResourceAsStream("/5pti_old.pdb");<a name="line.28"></a>
+<span class="sourceLineNo">029</span>                assertNotNull(inStream);<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>                PDBFileParser pdbpars = new PDBFileParser();<a name="line.31"></a>
+<span class="sourceLineNo">032</span>                FileParsingParameters params = new FileParsingParameters();<a name="line.32"></a>
+<span class="sourceLineNo">033</span>                params.setAlignSeqRes(true);<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                pdbpars.setFileParsingParameters(params);<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                <a name="line.35"></a>
+<span class="sourceLineNo">036</span>                try {<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                        structure = pdbpars.parsePDBFile(inStream) ;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                } catch (IOException e) {<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                        e.printStackTrace();<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                }<a name="line.40"></a>
+<span class="sourceLineNo">041</span><a name="line.41"></a>
+<span class="sourceLineNo">042</span>                assertNotNull(structure);<a name="line.42"></a>
+<span class="sourceLineNo">043</span><a name="line.43"></a>
+<span class="sourceLineNo">044</span>                assertEquals("structure does not contain one chain ", 2 ,structure.size());<a name="line.44"></a>
+<span class="sourceLineNo">045</span>        }<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>        public void testSeqResParsing() {<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>                // System.out.println(structure);<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                List&lt;Chain&gt; chains = structure.getChains(0);<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                assertEquals(" nr of found chains not correct!",2,chains.size());<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                Chain c = chains.get(0);<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                //System.out.println(c);<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                List&lt;Group&gt; seqResGroups = c.getSeqResGroups();<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                assertEquals("nr of SEQRES groups not correct!",58,seqResGroups.size());<a name="line.55"></a>
+<span class="sourceLineNo">056</span><a name="line.56"></a>
+<span class="sourceLineNo">057</span>                List&lt;Group&gt; atomGroups = c.getAtomGroups();<a name="line.57"></a>
+<span class="sourceLineNo">058</span><a name="line.58"></a>
+<span class="sourceLineNo">059</span>                Group g3 = seqResGroups.get(2);<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                int indexAtom = atomGroups.indexOf(g3);<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                //System.out.println(" index in atomlist: " + indexAtom);<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                assertEquals("the SEQRES group can not be found in the ATOM list",2,indexAtom);<a name="line.62"></a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span>                Group g5 = atomGroups.get(5);<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                assertEquals("The ATOM group can not be fond in the SEQRES list", 5,seqResGroups.indexOf(g5));<a name="line.66"></a>
+<span class="sourceLineNo">067</span><a name="line.67"></a>
+<span class="sourceLineNo">068</span>                Chain c2 = chains.get(1);<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                List&lt;Group&gt;atomGroups2 = c2.getAtomGroups();<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                Group g58 = atomGroups2.get(0);<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                assertEquals("The group is not PO4","PO4", g58.getPDBName());<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                assertEquals("The group P04 should not be in the SEQRES list", -1 , seqResGroups.indexOf(g58));<a name="line.72"></a>
+<span class="sourceLineNo">073</span><a name="line.73"></a>
+<span class="sourceLineNo">074</span>        }<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>        /** test if a PDB file can be parsed<a name="line.77"></a>
+<span class="sourceLineNo">078</span>         * @throws Exception */<a name="line.78"></a>
+<span class="sourceLineNo">079</span>        public void testReadPDBFile() throws Exception {<a name="line.79"></a>
+<span class="sourceLineNo">080</span><a name="line.80"></a>
+<span class="sourceLineNo">081</span>                assertEquals("pdb code not set!","5PTI",structure.getPDBCode());<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>                Chain c = structure.getChain(0);<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                assertEquals("did not find the expected 58 amino acids!",58,c.getAtomGroups("amino").size());<a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>                assertTrue(c.getAtomGroups("hetatm").size()     == 0);<a name="line.86"></a>
+<span class="sourceLineNo">087</span><a name="line.87"></a>
+<span class="sourceLineNo">088</span>                Chain c2 = structure.getChain(1);<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                assertTrue(c2.getAtomGroups("hetatm").size()     == 65);<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                assertTrue(c2.getAtomGroups("nucleotide").size() == 0 );<a name="line.90"></a>
+<span class="sourceLineNo">091</span><a name="line.91"></a>
+<span class="sourceLineNo">092</span>                List&lt;Compound&gt; compounds= structure.getCompounds();<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                assertTrue(compounds.size() == 1);<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                Compound mol = compounds.get(0);<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                assertTrue(mol.getMolName().startsWith("TRYPSIN INHIBITOR"));<a name="line.95"></a>
+<span class="sourceLineNo">096</span>        }<a name="line.96"></a>
+<span class="sourceLineNo">097</span><a name="line.97"></a>
+<span class="sourceLineNo">098</span><a name="line.98"></a>
+<span class="sourceLineNo">099</span>        public void testSSBondParsing() throws Exception {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                assertNotNull(structure);<a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>                List&lt;SSBond&gt; ssbonds = structure.getSSBonds();<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                assertEquals("did not find the correct nr of SSBonds ",3,ssbonds.size());<a name="line.103"></a>
+<span class="sourceLineNo">104</span><a name="line.104"></a>
+<span class="sourceLineNo">105</span>                String pdb1 = "SSBOND   1 CYS A    5    CYS A   55";<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                String pdb2 = "SSBOND   2 CYS A   14    CYS A   38";<a name="line.106"></a>
+<span class="sourceLineNo">107</span><a name="line.107"></a>
+<span class="sourceLineNo">108</span>                SSBond bond1 = ssbonds.get(0);<a name="line.108"></a>
+<span class="sourceLineNo">109</span><a name="line.109"></a>
+<span class="sourceLineNo">110</span>                String b1 = bond1.toPDB();<a name="line.110"></a>
+<span class="sourceLineNo">111</span><a name="line.111"></a>
+<span class="sourceLineNo">112</span>                assertTrue("PDB representation incorrect",pdb1.equals(b1.trim()));<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                assertTrue("not right resnum1 " , bond1.getResnum1().equals("5"));<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                assertTrue("not right resnum2 " , bond1.getResnum2().equals("55"));<a name="line.114"></a>
+<span class="sourceLineNo">115</span><a name="line.115"></a>
+<span class="sourceLineNo">116</span>                SSBond bond2 = ssbonds.get(1);<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                String b2 = bond2.toPDB();<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                assertTrue("not right resnum1 " , bond2.getResnum1().equals("14"));<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                assertTrue("not right resnum2 " , bond2.getResnum2().equals("38"));<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                assertTrue("PDB representation incorrect",pdb2.equals(b2.trim()));<a name="line.120"></a>
+<span class="sourceLineNo">121</span><a name="line.121"></a>
+<span class="sourceLineNo">122</span>        }<a name="line.122"></a>
+<span class="sourceLineNo">123</span><a name="line.123"></a>
+<span class="sourceLineNo">124</span>        /** Tests that standard amino acids are working properly<a name="line.124"></a>
+<span class="sourceLineNo">125</span>         * @throws Exception */<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        public void testStandardAmino() throws Exception {<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>                AminoAcid arg = StandardAminoAcid.getAminoAcid("ARG");<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                assertTrue(arg.size() == 11 );<a name="line.129"></a>
+<span class="sourceLineNo">130</span><a name="line.130"></a>
+<span class="sourceLineNo">131</span>                AminoAcid gly = StandardAminoAcid.getAminoAcid("G");<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                assertTrue(gly.size() == 4);<a name="line.132"></a>
+<span class="sourceLineNo">133</span><a name="line.133"></a>
+<span class="sourceLineNo">134</span>        }<a name="line.134"></a>
+<span class="sourceLineNo">135</span><a name="line.135"></a>
+<span class="sourceLineNo">136</span><a name="line.136"></a>
+<span class="sourceLineNo">137</span>        @SuppressWarnings("deprecation")<a name="line.137"></a>
+<span class="sourceLineNo">138</span>        public void testHeader() {<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                Map&lt;String, Object&gt; m = structure.getHeader();<a name="line.139"></a>
+<span class="sourceLineNo">140</span><a name="line.140"></a>
+<span class="sourceLineNo">141</span>                assertNotNull(m);<a name="line.141"></a>
+<span class="sourceLineNo">142</span><a name="line.142"></a>
+<span class="sourceLineNo">143</span>                String classification = (String)m.get("classification");<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                assertTrue(classification.equals("PROTEINASE INHIBITOR (TRYPSIN)"));<a name="line.144"></a>
+<span class="sourceLineNo">145</span><a name="line.145"></a>
+<span class="sourceLineNo">146</span>                String idCode = (String)m.get("idCode");<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                assertEquals("the idCode in the Header is " + idCode + " and not 5PTI, as expected","5PTI",idCode);<a name="line.147"></a>
+<span class="sourceLineNo">148</span><a name="line.148"></a>
+<span class="sourceLineNo">149</span>                Float resolution = (Float) m.get("resolution");<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                assertEquals("the resolution in the Header is " + resolution + " and not 1.0, as expected",new Float(1.0),resolution);<a name="line.150"></a>
+<span class="sourceLineNo">151</span><a name="line.151"></a>
+<span class="sourceLineNo">152</span>                String technique = (String) m.get("technique");<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                String techShould = "X-RAY DIFFRACTION ";<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                assertEquals("the technique in the Header is " + technique, techShould,technique);<a name="line.154"></a>
+<span class="sourceLineNo">155</span><a name="line.155"></a>
+<span class="sourceLineNo">156</span>                List &lt;Compound&gt; compounds = structure.getCompounds();<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                assertEquals("did not find the right number of compounds! ", 1, compounds.size());<a name="line.157"></a>
+<span class="sourceLineNo">158</span><a name="line.158"></a>
+<span class="sourceLineNo">159</span>                Compound comp = compounds.get(0);<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                assertEquals("did not get the right compounds info",true,comp.getMolName().startsWith("TRYPSIN INHIBITOR"));<a name="line.160"></a>
+<span class="sourceLineNo">161</span><a name="line.161"></a>
+<span class="sourceLineNo">162</span>                List&lt;String&gt; chainIds = comp.getChainId();<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                List&lt;Chain&gt; chains    = comp.getChains();<a name="line.163"></a>
+<span class="sourceLineNo">164</span><a name="line.164"></a>
+<span class="sourceLineNo">165</span>                assertEquals("the number of chain ids and chains did not match!",chainIds.size(),chains.size());<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                assertEquals("the chain ID did not match", chainIds.get(0),chains.get(0).getName());<a name="line.166"></a>
+<span class="sourceLineNo">167</span><a name="line.167"></a>
+<span class="sourceLineNo">168</span><a name="line.168"></a>
+<span class="sourceLineNo">169</span>        }<a name="line.169"></a>
+<span class="sourceLineNo">170</span><a name="line.170"></a>
+<span class="sourceLineNo">171</span><a name="line.171"></a>
+<span class="sourceLineNo">172</span>        @SuppressWarnings("deprecation")<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        public void testPDBHeader(){<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                Map&lt;String, Object&gt; m = structure.getHeader();<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                PDBHeader header = structure.getPDBHeader();<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                String classification = (String)m.get("classification");<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                assertTrue(classification.equals(header.getClassification()));<a name="line.177"></a>
+<span class="sourceLineNo">178</span><a name="line.178"></a>
+<span class="sourceLineNo">179</span>                String idCode = (String)m.get("idCode");<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                assertTrue(idCode.equals(header.getIdCode()));<a name="line.180"></a>
+<span class="sourceLineNo">181</span><a name="line.181"></a>
+<span class="sourceLineNo">182</span>                Float resolution = (Float) m.get("resolution");<a name="line.182"></a>
+<span class="sourceLineNo">183</span>                assertTrue(resolution.floatValue() == header.getResolution());<a name="line.183"></a>
+<span class="sourceLineNo">184</span><a name="line.184"></a>
+<span class="sourceLineNo">185</span>                String technique = (String) m.get("technique");<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                assertTrue(technique.equals(header.getTechnique()));<a name="line.186"></a>
+<span class="sourceLineNo">187</span><a name="line.187"></a>
+<span class="sourceLineNo">188</span>        }<a name="line.188"></a>
+<span class="sourceLineNo">189</span><a name="line.189"></a>
+<span class="sourceLineNo">190</span>        public void testCreateVirtualCBAtom(){<a name="line.190"></a>
+<span class="sourceLineNo">191</span><a name="line.191"></a>
+<span class="sourceLineNo">192</span>                Group g1 = structure.getChain(0).getAtomGroup(11);<a name="line.192"></a>
+<span class="sourceLineNo">193</span><a name="line.193"></a>
+<span class="sourceLineNo">194</span>                if ( g1.getPDBName().equals("GLY")){<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                        if ( g1 instanceof AminoAcid){<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                                try {<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                                        Atom cb = Calc.createVirtualCBAtom((AminoAcid)g1);<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                                        g1.addAtom(cb);<a name="line.198"></a>
+<span class="sourceLineNo">199</span>                                } catch (StructureException e){<a name="line.199"></a>
+<span class="sourceLineNo">200</span>                                        fail ("createVirtualCBAtom failed with " + e.getMessage());<a name="line.200"></a>
+<span class="sourceLineNo">201</span>                                }<a name="line.201"></a>
+<span class="sourceLineNo">202</span>                        }<a name="line.202"></a>
+<span class="sourceLineNo">203</span>                } else {<a name="line.203"></a>
+<span class="sourceLineNo">204</span>                        fail("the group at position 11 is not a GLY!");<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                }<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        }<a name="line.206"></a>
+<span class="sourceLineNo">207</span><a name="line.207"></a>
+<span class="sourceLineNo">208</span>        public void testMutation() throws Exception {<a name="line.208"></a>
+<span class="sourceLineNo">209</span><a name="line.209"></a>
+<span class="sourceLineNo">210</span>                Group g1 = (Group)structure.getChain(0).getAtomGroup(21).clone();<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                assertTrue(g1 != null);<a name="line.211"></a>
+<span class="sourceLineNo">212</span><a name="line.212"></a>
+<span class="sourceLineNo">213</span><a name="line.213"></a>
+<span class="sourceLineNo">214</span>                Group g2 = (Group)structure.getChain(0).getAtomGroup(53).clone();<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                assertTrue(g2 != null);<a name="line.215"></a>
+<span class="sourceLineNo">216</span><a name="line.216"></a>
+<span class="sourceLineNo">217</span><a name="line.217"></a>
+<span class="sourceLineNo">218</span>                assertEquals("The group at position 22 is not a PHE","PHE", g1.getPDBName());<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                assertEquals("The group position is  not number 22","22", g1.getResidueNumber().toString());<a name="line.219"></a>
+<span class="sourceLineNo">220</span><a name="line.220"></a>
+<span class="sourceLineNo">221</span>                assertEquals("The group at position 54 is not a THR","THR", g2.getPDBName());<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                assertEquals("The group position is not number 54","54", g2.getResidueNumber().toString());<a name="line.222"></a>
+<span class="sourceLineNo">223</span><a name="line.223"></a>
+<span class="sourceLineNo">224</span>                Atom[] atoms1 = new Atom[3];<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                Atom[] atoms2 = new Atom[3];<a name="line.225"></a>
+<span class="sourceLineNo">226</span><a name="line.226"></a>
+<span class="sourceLineNo">227</span>                atoms1[0] = g1.getAtom("N");<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                atoms1[1] = g1.getAtom("CA");<a name="line.228"></a>
+<span class="sourceLineNo">229</span>                atoms1[2] = g1.getAtom("CB");<a name="line.229"></a>
+<span class="sourceLineNo">230</span><a name="line.230"></a>
+<span class="sourceLineNo">231</span><a name="line.231"></a>
+<span class="sourceLineNo">232</span>                atoms2[0] = g2.getAtom("N");<a name="line.232"></a>
+<span class="sourceLineNo">233</span>                atoms2[1] = g2.getAtom("CA");<a name="line.233"></a>
+<span class="sourceLineNo">234</span>                atoms2[2] = g2.getAtom("CB");<a name="line.234"></a>
+<span class="sourceLineNo">235</span><a name="line.235"></a>
+<span class="sourceLineNo">236</span><a name="line.236"></a>
+<span class="sourceLineNo">237</span>                SVDSuperimposer svds = new SVDSuperimposer(atoms1,atoms2);<a name="line.237"></a>
+<span class="sourceLineNo">238</span><a name="line.238"></a>
+<span class="sourceLineNo">239</span><a name="line.239"></a>
+<span class="sourceLineNo">240</span>                Matrix rotMatrix = svds.getRotation();<a name="line.240"></a>
+<span class="sourceLineNo">241</span>                Atom   tran      = svds.getTranslation();<a name="line.241"></a>
+<span class="sourceLineNo">242</span><a name="line.242"></a>
+<span class="sourceLineNo">243</span>                Group newGroup = (Group)g2.clone();<a name="line.243"></a>
+<span class="sourceLineNo">244</span><a name="line.244"></a>
+<span class="sourceLineNo">245</span>                Calc.rotate(newGroup,rotMatrix);<a name="line.245"></a>
+<span class="sourceLineNo">246</span><a name="line.246"></a>
+<span class="sourceLineNo">247</span>                Calc.shift(newGroup,tran);<a name="line.247"></a>
+<span class="sourceLineNo">248</span><a name="line.248"></a>
+<span class="sourceLineNo">249</span>                Atom ca1    =       g1.getAtom("CA");<a name="line.249"></a>
+<span class="sourceLineNo">250</span>                Atom oldca2 =       g2.getAtom("CA");<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                Atom newca2 = newGroup.getAtom("CA");<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                Element e1 = ca1.getElement();<a name="line.252"></a>
+<span class="sourceLineNo">253</span>                <a name="line.253"></a>
+<span class="sourceLineNo">254</span>                assertEquals(Element.C, e1);<a name="line.254"></a>
+<span class="sourceLineNo">255</span><a name="line.255"></a>
+<span class="sourceLineNo">256</span>                // this also tests the cloning ...<a name="line.256"></a>
+<span class="sourceLineNo">257</span>                double olddistance = Calc.getDistance(ca1,oldca2);<a name="line.257"></a>
+<span class="sourceLineNo">258</span>                assertTrue( olddistance &gt; 10 );<a name="line.258"></a>
+<span class="sourceLineNo">259</span><a name="line.259"></a>
+<span class="sourceLineNo">260</span>                // final test check that the distance between the CA atoms is small ;<a name="line.260"></a>
+<span class="sourceLineNo">261</span><a name="line.261"></a>
+<span class="sourceLineNo">262</span>                double newdistance = Calc.getDistance(ca1,newca2);<a name="line.262"></a>
+<span class="sourceLineNo">263</span>                assertTrue( newdistance &lt; 0.1);<a name="line.263"></a>
+<span class="sourceLineNo">264</span><a name="line.264"></a>
+<span class="sourceLineNo">265</span><a name="line.265"></a>
+<span class="sourceLineNo">266</span>        }<a name="line.266"></a>
+<span class="sourceLineNo">267</span><a name="line.267"></a>
+<span class="sourceLineNo">268</span>        public void testElement() throws Exception {<a name="line.268"></a>
+<span class="sourceLineNo">269</span>                // there should be no wild card elements<a name="line.269"></a>
+<span class="sourceLineNo">270</span>                // in a structure (!= Element.R)<a name="line.270"></a>
+<span class="sourceLineNo">271</span>                for (Chain c: structure.getChains()) {<a name="line.271"></a>
+<span class="sourceLineNo">272</span>                        for (Group g: c.getAtomGroups()) {<a name="line.272"></a>
+<span class="sourceLineNo">273</span>                                for (Atom a: g.getAtoms()) {<a name="line.273"></a>
+<span class="sourceLineNo">274</span>                                        assertFalse(a.getElement().equals(Element.R));<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                                }<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                        }<a name="line.276"></a>
+<span class="sourceLineNo">277</span>                }<a name="line.277"></a>
+<span class="sourceLineNo">278</span>        }<a name="line.278"></a>
+<span class="sourceLineNo">279</span><a name="line.279"></a>
+<span class="sourceLineNo">280</span><a name="line.280"></a>
+<span class="sourceLineNo">281</span>}<a name="line.281"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

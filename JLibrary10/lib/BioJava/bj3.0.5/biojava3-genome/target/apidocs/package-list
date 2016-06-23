@@ -1,0 +1,7 @@
+org.biojava3.genome
+org.biojava3.genome.homology
+org.biojava3.genome.parsers.geneid
+org.biojava3.genome.parsers.gff
+org.biojava3.genome.query
+org.biojava3.genome.uniprot
+org.biojava3.genome.util

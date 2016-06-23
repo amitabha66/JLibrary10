@@ -1,0 +1,11 @@
+demo
+org.biojava.bio.structure.align.gui
+org.biojava.bio.structure.align.gui.aligpanel
+org.biojava.bio.structure.align.gui.autosuggest
+org.biojava.bio.structure.align.gui.jmol
+org.biojava.bio.structure.align.webstart
+org.biojava.bio.structure.gui
+org.biojava.bio.structure.gui.events
+org.biojava.bio.structure.gui.util
+org.biojava.bio.structure.gui.util.color
+org.biojava3.structure.gui

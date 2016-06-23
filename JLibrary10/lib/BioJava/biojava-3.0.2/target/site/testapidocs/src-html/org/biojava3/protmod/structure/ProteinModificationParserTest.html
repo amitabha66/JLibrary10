@@ -1,0 +1,446 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> *                    BioJava development code<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * This code may be freely distributed and modified under the<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * terms of the GNU Lesser General Public Licence.  This should<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * be distributed with the code.  If you do not have a copy,<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * see:<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.gnu.org/copyleft/lesser.html<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Copyright for this code is held jointly by the individual<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * authors.  These should be listed in @author doc comments.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> *<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * For more information on the BioJava project and its aims,<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * or to join the biojava-l mailing list, visit the home page<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * at:<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *<a name="line.17"></a>
+<span class="sourceLineNo">018</span> *      http://www.biojava.org/<a name="line.18"></a>
+<span class="sourceLineNo">019</span> *<a name="line.19"></a>
+<span class="sourceLineNo">020</span> * Created on Jun 8, 2010<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * Author: Jianjiong Gao <a name="line.21"></a>
+<span class="sourceLineNo">022</span> *<a name="line.22"></a>
+<span class="sourceLineNo">023</span> */<a name="line.23"></a>
+<span class="sourceLineNo">024</span><a name="line.24"></a>
+<span class="sourceLineNo">025</span>package org.biojava3.protmod.structure;<a name="line.25"></a>
+<span class="sourceLineNo">026</span><a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.io.IOException;<a name="line.27"></a>
+<span class="sourceLineNo">028</span><a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.util.Set;<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>import junit.framework.TestCase;<a name="line.31"></a>
+<span class="sourceLineNo">032</span><a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.biojava.bio.structure.Structure;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.biojava.bio.structure.StructureException;<a name="line.34"></a>
+<span class="sourceLineNo">035</span><a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.biojava3.protmod.ProteinModification;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import org.biojava3.protmod.ProteinModificationRegistry;<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span>/**<a name="line.39"></a>
+<span class="sourceLineNo">040</span> * <a name="line.40"></a>
+<span class="sourceLineNo">041</span> * @author Jianjiong Gao<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * @since 3.0<a name="line.42"></a>
+<span class="sourceLineNo">043</span> */<a name="line.43"></a>
+<span class="sourceLineNo">044</span>public class ProteinModificationParserTest extends TestCase {<a name="line.44"></a>
+<span class="sourceLineNo">045</span>        <a name="line.45"></a>
+<span class="sourceLineNo">046</span>        private String[][] strucs;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>        <a name="line.47"></a>
+<span class="sourceLineNo">048</span>        public void setUp() {<a name="line.48"></a>
+<span class="sourceLineNo">049</span>                strucs = setUpShortTest();<a name="line.49"></a>
+<span class="sourceLineNo">050</span>//              strucs = setUpLongTest();<a name="line.50"></a>
+<span class="sourceLineNo">051</span>        }<a name="line.51"></a>
+<span class="sourceLineNo">052</span>        <a name="line.52"></a>
+<span class="sourceLineNo">053</span>        public static String[][] setUpShortTest() {<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                String[][] strucs = new String[][] {<a name="line.54"></a>
+<span class="sourceLineNo">055</span>//                              {"1cdg", null},<a name="line.55"></a>
+<span class="sourceLineNo">056</span>//                              <a name="line.56"></a>
+<span class="sourceLineNo">057</span>//                              // Attachments<a name="line.57"></a>
+<span class="sourceLineNo">058</span>//                              {"3HN3", "AA0151"}, // NAG<a name="line.58"></a>
+<span class="sourceLineNo">059</span>//                              {"1ZNF", "AA0053"}, // ACE on THR<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                                {"1MCC", "AA0045"}, // ACE on GLU<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                                {"1SCY", "AA0089"}, // NH2 on HIS<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                                <a name="line.62"></a>
+<span class="sourceLineNo">063</span>                                // Modified resdiues<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                                {"1UIS", "AA0183"}, // NRQ<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                                {"3MVJ", "AA0037"}, // SEP<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                                <a name="line.66"></a>
+<span class="sourceLineNo">067</span>                                // remediation changed 1DOJ...<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                                //{"1DOJ", "AA0065"}, // MEA<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                                {"1DOJ", "AA0172"}, // TYS<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                                {"3H5R", "AA0302"}, // SNN, note: SNN is not at C-terminal in some structures, e.g. 3I4W<a name="line.70"></a>
+<span class="sourceLineNo">071</span><a name="line.71"></a>
+<span class="sourceLineNo">072</span>                                // Cross link<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                                {"1UIS", "AA0379"}, // NRQ<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                                {"3M6S", "AA0025"}, // Disulfide bond<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                                {"1A6L", "AA0139"}, // F3S<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                                {"1A70", "AA0137"}, // FES<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                                {"1RPB", "AA0216"}, // Isopeptide (Cys - ASP)<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                                {"1FP4", "AA0141"}, // CFM, HCA, CYS, HIS<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                                {"1EMA", "AA0183"}, // CRO, cross-link1<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                                {"2IWK", "AA0298"}, // CU4<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                                {"1SU6", "AA0310"}, // NFS, 5 CYS, HIS<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                                {"2AXR", "AA0436"}, // CYS-FAD-HIS<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                                {"3H8L", "AA0513"}, // CYS-S3H-CYS<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                                {"1CAD", null}, // FE and 4 Cys, cross-link4<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                                <a name="line.85"></a>
+<span class="sourceLineNo">086</span>                };<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                return strucs;<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        }<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        <a name="line.89"></a>
+<span class="sourceLineNo">090</span>        public static String[][] setUpLongTest() {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                String[][] strucs = new String[][] {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                                // Attachments<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                                {"3HN3", "AA0151"}, // NAG<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                                {"1CPO", "AA0406"}, // XYS<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                                {"1AL2", "AA0059"}, // MYR<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                                {"1L9H", "AA0106"}, // PLM<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                                {"1BDO", "AA0117"}, // BTN<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                                //{"2IQD", "AA0118"}, // no successful test case for LPA<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                                {"1AT9", "AA0120"}, // RET<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                                //{"1DJP", "AA0121"}, // DO2, (bond length error 3.0)<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                                {"1ALL", "AA0131"}, // CYC<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                                {"1B8D", "AA0132"}, // PEB<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                                {"1OGP", "AA0142"}, // MTQ<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                                {"1EL5", "AA0143"}, // FAD on CYS<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                                {"1W1O", "AA0144"}, // FAD on HIS<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                                {"1DII", "AA0145"}, // FAD on TYR<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                                {"2KJS", "AA0150"}, // PNS<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                                {"1D7E", "AA0207"}, // HC4<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                                {"2TMD", "AA0220"}, // FMN<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                                {"1VAO", "AA0221"}, // FAD on HIS<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                                {"1PDA", "AA0252"}, // DPM<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                                {"2J96", "AA0258"}, // PVN<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                                {"2HIL", "AA0264"}, // OPE<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                                //{"1RTX", "AA0329"}, // HEM, (bond length error 3.0, much closer to FE)<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                                {"1FEH", "AA0334"}, // HC1<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                                //{"2Z6D", "AA0351"}, // FMN, (bond length error 2.0)<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                                {"1N63", "AA0355"}, // CYS-CUN-MCN<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                                {"1HXQ", "AA0372"}, // U5P on HIS<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                                {"1QI9", "AA0395"}, // VO4 on HIS<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                                {"1XG0", "AA0428"}, // DBV on CYS<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                                //{"1E9W", "AA0447"}, // TSI on ILE, error when reading<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                                {"2HIL", "AA0497"}, // OPE on SER<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                                {"3I3L", "AA0522"}, // FAD on ASP<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                                {"1MCC", "AA0045"}, // ACE on GLU<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                                {"5CPV", "AA0041"}, // ACE on ALA<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                                {"1BBR", "AA0042"}, // ACE on ASP<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                                {"1AL1", "AA0044"}, // ACE on GLU<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                                {"1SEM", "AA0050"}, // ACE on PRO<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                                {"1PVB", "AA0051"}, // ACE on SER<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                                {"1ZNF", "AA0053"}, // ACE on THR<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                                {"1SCY", "AA0089"}, // NH2 on HIS<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                                <a name="line.132"></a>
+<span class="sourceLineNo">133</span>                                // Modified resdiues<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                                {"3MVJ", "AA0037"}, // SEP<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                                {"3MVJ", "AA0038"}, // TPO<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                                {"1KZU", "AA0021"}, // FME<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                                {"1AA6", "AA0022"}, // CSE<a name="line.137"></a>
+<span class="sourceLineNo">138</span>                                {"1NT0", "AA0026"}, // AHB<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                                {"1ERM", "AA0027"}, // BHD<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                                {"1QGW", "AA0028"}, // LYZ<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                                {"2G66", "AA0029"}, // HY3<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                                {"2G66", "AA0030"}, // HYP<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                                {"1A39", "AA0031"}, // PCA<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                                {"1AG7", "AA0032"}, // CGU<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                                {"1D5W", "AA0033"}, // PHD<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                                {"1H9C", "AA0034"}, // CSP<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                                {"1EUD", "AA0035"}, // NEP<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                                {"1NSQ", "AA0036"}, // HIP<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                                {"3LXN", "AA0039"}, // PTR<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                                {"1ZM2", "AA0040"}, // DDE<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                                {"1E0Z", "AA0055"}, // ALY<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                                {"1DM3", "AA0056"}, // SCY<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                                // {"2NPP", "AA0061"}, // MAA<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                                {"1GK8", "AA0064"}, // MME<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                                {"1DOJ", "AA0065"}, // MEA<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                                {"1DOJ", "AA0172"}, // TYS<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                                {"1G42", "AA0067"}, // 2MR<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                                {"2B2U", "AA0068"}, // DA2<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                                {"2B2U", "AA0074"}, // M3L<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                                {"1ALL", "AA0070"}, // MEN<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                                {"3FMY", "AA0071"}, // MEQ<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                                {"1E6Y", "AA0073"}, // MHS<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                                {"1E6Y", "AA0272"}, // AGM<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                                {"1IV8", "AA0075"}, // MLY<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                                {"1IV8", "AA0076"}, // MLZ<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                                {"1ZTO", "AA0082"}, // AAR<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                                {"2V1S", "AA0085"}, // CY3<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                                {"1XXP", "AA0091"}, // CLE<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                                // {"1XAE", "AA0094"}, // NFA, C-terminal modification, but occurs in non-terminal residue<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                                // {"2H9E", "AA0095"}, // LPD<a name="line.170"></a>
+<span class="sourceLineNo">171</span>                                // {"2BF9", "AA0099"}, // TYC, error reading PDB file<a name="line.171"></a>
+<span class="sourceLineNo">172</span>                                // {"1YYL", "AA0100"}, // VLM<a name="line.172"></a>
+<span class="sourceLineNo">173</span>                                {"1AEX", "AA0101"}, // SCH<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                                {"1OMW", "AA0105"}, // CMT<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                                {"2C0J", "AA0106"}, // P1L<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                                {"1AA1", "AA0114"}, // KCX<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                                {"1O5K", "AA0115"}, // MCL<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                                {"1A8I", "AA0119"}, // LLP<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                                {"2J4Y", "AA0120"}, // LYR<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                                //PVL not exist in PDB<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                                {"1A2V", "AA0147"}, // TPQ<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                                {"1JJU", "AA0148"}, // TRQ<a name="line.182"></a>
+<span class="sourceLineNo">183</span>                                {"1WCT", "AA0155"}, // GTH<a name="line.183"></a>
+<span class="sourceLineNo">184</span>                                {"1A2C", "AA0172"}, // TYS<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                                {"1WCT", "AA0179"}, // BTR<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                                {"1AUK", "AA0185"}, // FGL<a name="line.186"></a>
+<span class="sourceLineNo">187</span>                                {"148L", "AA0191"}, // DAL<a name="line.187"></a>
+<span class="sourceLineNo">188</span>                                // {"1C4B", "AA0192"}, // DIL<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                                {"1T5M", "AA0196"}, // DSG<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                                // {"1CZQ", "AA0198"}, // DTR<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                                {"2JUE", "AA0199"}, // DTH<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                                {"1A7Y", "AA0200"}, // DVA<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                                {"1CXP", "AA0205"}, // CSO<a name="line.193"></a>
+<span class="sourceLineNo">194</span>                                {"1F8W", "AA0205"}, // CSX<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                                {"1FFV", "AA0215"}, // ARO<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                                {"1CKN", "AA0228"}, // GPL<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                                {"1BUW", "AA0230"}, // SNC<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                                {"1CZI", "AA0234"}, // SMC<a name="line.198"></a>
+<span class="sourceLineNo">199</span>                                {"1E93", "AA0251"}, // OMT<a name="line.199"></a>
+<span class="sourceLineNo">200</span>                                {"1ACD", "AA0262"}, // CSD<a name="line.200"></a>
+<span class="sourceLineNo">201</span>                                {"1C0T", "AA0262"}, // CSW<a name="line.201"></a>
+<span class="sourceLineNo">202</span>                                {"1E6Y", "AA0265"}, // GL3<a name="line.202"></a>
+<span class="sourceLineNo">203</span>                                {"1BI0", "AA0269"}, // CSS<a name="line.203"></a>
+<span class="sourceLineNo">204</span>                                {"1E6Y", "AA0272"}, // AGM<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                                {"1HBM", "AA0273"}, // MGN<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                                {"1FFU", "AA0277"}, // CSZ<a name="line.206"></a>
+<span class="sourceLineNo">207</span>                                {"3H5R", "AA0302"}, // SNN, note: SNN is not at C-terminal in some structures, e.g. 3I4W<a name="line.207"></a>
+<span class="sourceLineNo">208</span>                                {"1JQ7", "AA0311"}, // DMH<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                                {"1J6Z", "AA0317"}, // HIC<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                                {"1B80", "AA0322"}, // HTR<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                                {"1CWM", "AA0336"}, // IML<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                                {"1BCK", "AA0337"}, // MLE<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                                {"1EA7", "AA0361"}, // OSE<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                                {"1TYS", "AA0363"}, // CXM<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                                {"1EBV", "AA0364"}, // OAS<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                                {"2VZK", "AA0423"}, // TH5<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                                {"2IU4", "AA0431"}, // HIQ<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                                {"1Y9A", "AA0432"}, // OHS<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                                {"2IUW", "AA0444"}, // LED<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                                {"1K83", "AA0449"}, // ILX<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                                {"2VH3", "AA0458"}, // FGL<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                                {"2AOC", "AA0464"}, // OLT<a name="line.222"></a>
+<span class="sourceLineNo">223</span>                                {"1DSR", "AA0478"}, // AHB<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                                {"1AIQ", "AA0493"}, // CXM<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                                {"1CF0", "AA0509"}, // IYR<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                                {"1CTP", "AA0510"}, // TYI<a name="line.226"></a>
+<span class="sourceLineNo">227</span>                                {"3L4M", "AA0520"}, // 0AF<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                                {"4ECA", "AA0525"}, // AEI<a name="line.228"></a>
+<span class="sourceLineNo">229</span><a name="line.229"></a>
+<span class="sourceLineNo">230</span>                                // Cross link<a name="line.230"></a>
+<span class="sourceLineNo">231</span>                                {"3M6S", "AA0025"}, // Disulfide bond<a name="line.231"></a>
+<span class="sourceLineNo">232</span>                                {"1A6L", "AA0139"}, // F3S<a name="line.232"></a>
+<span class="sourceLineNo">233</span>                                {"1A70", "AA0137"}, // FES<a name="line.233"></a>
+<span class="sourceLineNo">234</span>                                {"1RPB", "AA0216"}, // Isopeptide (Cys - ASP)<a name="line.234"></a>
+<span class="sourceLineNo">235</span>                                {"3B2M", "AA0294"}, // isopeptide (Lys - Asn)<a name="line.235"></a>
+<span class="sourceLineNo">236</span>                                {"1FP4", "AA0141"}, // CFM, HCA, CYS, HIS<a name="line.236"></a>
+<span class="sourceLineNo">237</span>                                {"1M1N", "AA0141"}, // CFN, HCA, CYS, HIS<a name="line.237"></a>
+<span class="sourceLineNo">238</span>                                //{"1G21", "AA0141"}, // CFM, HCA, CYS, HIS, (bond length error 0.5)<a name="line.238"></a>
+<span class="sourceLineNo">239</span>                                //{"1M34", "AA0141"}, // CFM, HCA, CYS, HIS, (bond length error 1.0)<a name="line.239"></a>
+<span class="sourceLineNo">240</span>                                {"1G7K", "AA0183"}, // CRQ, cross-link1<a name="line.240"></a>
+<span class="sourceLineNo">241</span>                                {"1EMA", "AA0183"}, // CRO, cross-link1<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                                //{"1GGE", "AA0250"}, // HIS-TYR, cross-link2, (bond length error 0.6)<a name="line.242"></a>
+<span class="sourceLineNo">243</span>                                {"2JE3", "AA0271"}, // HEC, CYS, CYS, LYS<a name="line.243"></a>
+<span class="sourceLineNo">244</span>                                //{"1MHL", "AA0280"}, // not work for HEM<a name="line.244"></a>
+<span class="sourceLineNo">245</span>                                //{"1MYP", "AA0280"}, // not work for HEM<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                                //{"3HML", "AA0283"}, // PQQ, GLU, TYR, (bond length error 2)<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                                {"1FWX", "AA0298"}, // CU4<a name="line.247"></a>
+<span class="sourceLineNo">248</span>                                {"1QNI", "AA0298"}, // CU4<a name="line.248"></a>
+<span class="sourceLineNo">249</span>                                {"2IWF", "AA0298"}, // CU4<a name="line.249"></a>
+<span class="sourceLineNo">250</span>                                {"2IWK", "AA0298"}, // CU4<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                                //{"1G20", "AA0300"}, // CLF (bond length error 20)<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                                {"1SU6", "AA0310"}, // NFS, 5 CYS, HIS<a name="line.252"></a>
+<span class="sourceLineNo">253</span>                                // {"1SU7", "AA0310"}, // NFS, 5 CYS, HIS (looks like 6 CYS are linked)<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                                //{"1JJU", "AA0313"}, // CYS-TRP, (bond length error 3)<a name="line.254"></a>
+<span class="sourceLineNo">255</span>                                {"1JJU", "AA0314"}, // CYS-ASP<a name="line.255"></a>
+<span class="sourceLineNo">256</span>                                {"1JJU", "AA0315"}, // CYS-GLU<a name="line.256"></a>
+<span class="sourceLineNo">257</span>                                //{"1AJ1", "AA0330"}, // CYS-THR, could not find.<a name="line.257"></a>
+<span class="sourceLineNo">258</span>                                {"1PXQ", "AA0340"}, // CYS-PHE<a name="line.258"></a>
+<span class="sourceLineNo">259</span>                                {"1PXQ", "AA0342"}, // CYS-THR<a name="line.259"></a>
+<span class="sourceLineNo">260</span>                                {"1ITK", "AA0348"}, // MET-TYR-TRP<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                                //{"1R30", "AA0356"}, // 3 CYS-SF4-SAM (bond length error 0.6)<a name="line.261"></a>
+<span class="sourceLineNo">262</span>                                {"1R30", "AA0357"}, // 3 CYS-FES-ARG<a name="line.262"></a>
+<span class="sourceLineNo">263</span>                                // {"1S5L", "AA0366"}, // 2 ASP-3 GLU-HIT-OEC (bond length error 6)<a name="line.263"></a>
+<span class="sourceLineNo">264</span>                                {"1NGK", "AA0368"}, //TYR-TYR<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                                {"1YZW", "AA0378"}, // CRU<a name="line.265"></a>
+<span class="sourceLineNo">266</span>                                {"1XQM", "AA0379"}, // CH6<a name="line.266"></a>
+<span class="sourceLineNo">267</span>                                {"1UIS", "AA0379"}, // NRQ<a name="line.267"></a>
+<span class="sourceLineNo">268</span>                                {"2OJK", "AA0380"}, // NYG<a name="line.268"></a>
+<span class="sourceLineNo">269</span>                                {"2A46", "AA0381"}, // CR7<a name="line.269"></a>
+<span class="sourceLineNo">270</span>                                {"1YZW", "AA0183"}, // CRU<a name="line.270"></a>
+<span class="sourceLineNo">271</span>                                {"1XQM", "AA0183"}, // CH6<a name="line.271"></a>
+<span class="sourceLineNo">272</span>                                {"1UIS", "AA0183"}, // NRQ<a name="line.272"></a>
+<span class="sourceLineNo">273</span>                                {"2OJK", "AA0183"}, // NYG<a name="line.273"></a>
+<span class="sourceLineNo">274</span>                                {"2A46", "AA0183"}, // CR7<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                                {"2AXR", "AA0436"}, // CYS-FAD-HIS<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                                {"2QH7", "AA0438"}, // 3 CYS-FES-HIS<a name="line.276"></a>
+<span class="sourceLineNo">277</span>                                //{"2VUM", "AA0451"}, // CYS-TRP (bond length error 2)<a name="line.277"></a>
+<span class="sourceLineNo">278</span>                                {"3EE4", "AA0490"}, // VAL-TYR<a name="line.278"></a>
+<span class="sourceLineNo">279</span>                                {"3H8L", "AA0513"}, // CYS-S3H-CYS<a name="line.279"></a>
+<span class="sourceLineNo">280</span>                                {"1CAD", null}, // FE and 4 Cys, cross-link4<a name="line.280"></a>
+<span class="sourceLineNo">281</span>                };<a name="line.281"></a>
+<span class="sourceLineNo">282</span>                return strucs;<a name="line.282"></a>
+<span class="sourceLineNo">283</span>        }<a name="line.283"></a>
+<span class="sourceLineNo">284</span>        <a name="line.284"></a>
+<span class="sourceLineNo">285</span>        public void testParser() throws IOException, StructureException {<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                multiTest();<a name="line.286"></a>
+<span class="sourceLineNo">287</span>        }<a name="line.287"></a>
+<span class="sourceLineNo">288</span>        <a name="line.288"></a>
+<span class="sourceLineNo">289</span>        public void multiTest() {<a name="line.289"></a>
+<span class="sourceLineNo">290</span>                for ( String[] name : strucs){<a name="line.290"></a>
+<span class="sourceLineNo">291</span>                        try {<a name="line.291"></a>
+<span class="sourceLineNo">292</span>//                              parserTest(name[0], (String)null); <a name="line.292"></a>
+<span class="sourceLineNo">293</span>                                parserTest(name[0], name[1]);<a name="line.293"></a>
+<span class="sourceLineNo">294</span>                        } catch (Exception e){<a name="line.294"></a>
+<span class="sourceLineNo">295</span>                                e.printStackTrace();<a name="line.295"></a>
+<span class="sourceLineNo">296</span>                                fail(e.getMessage());<a name="line.296"></a>
+<span class="sourceLineNo">297</span>                        }<a name="line.297"></a>
+<span class="sourceLineNo">298</span>                }<a name="line.298"></a>
+<span class="sourceLineNo">299</span>        }<a name="line.299"></a>
+<span class="sourceLineNo">300</span><a name="line.300"></a>
+<span class="sourceLineNo">301</span>        private void parserTest(String pdbId, String residId) throws IOException, StructureException {<a name="line.301"></a>
+<span class="sourceLineNo">302</span>                Set&lt;ProteinModification&gt; mods;<a name="line.302"></a>
+<span class="sourceLineNo">303</span>                if (residId==null) {<a name="line.303"></a>
+<span class="sourceLineNo">304</span>                        mods = ProteinModificationRegistry.allModifications();<a name="line.304"></a>
+<span class="sourceLineNo">305</span>                } else {<a name="line.305"></a>
+<span class="sourceLineNo">306</span>                        mods = ProteinModificationRegistry.getByResidId(residId);<a name="line.306"></a>
+<span class="sourceLineNo">307</span>                }<a name="line.307"></a>
+<span class="sourceLineNo">308</span>                <a name="line.308"></a>
+<span class="sourceLineNo">309</span>                parserTest(pdbId, mods);<a name="line.309"></a>
+<span class="sourceLineNo">310</span>        }<a name="line.310"></a>
+<span class="sourceLineNo">311</span>        <a name="line.311"></a>
+<span class="sourceLineNo">312</span>        private void parserTest(String pdbId, Set&lt;ProteinModification&gt; mods) throws IOException, StructureException {     <a name="line.312"></a>
+<span class="sourceLineNo">313</span>                Structure struc = TmpAtomCache.cache.getStructure(pdbId);<a name="line.313"></a>
+<span class="sourceLineNo">314</span><a name="line.314"></a>
+<span class="sourceLineNo">315</span>                ProteinModificationIdentifier parser = new ProteinModificationIdentifier();<a name="line.315"></a>
+<span class="sourceLineNo">316</span>                boolean recordUnidentifiable = false;<a name="line.316"></a>
+<span class="sourceLineNo">317</span>                parser.setRecordUnidentifiableCompounds(recordUnidentifiable);<a name="line.317"></a>
+<span class="sourceLineNo">318</span>//              parser.setbondLengthTolerance(2);<a name="line.318"></a>
+<span class="sourceLineNo">319</span>                <a name="line.319"></a>
+<span class="sourceLineNo">320</span>                assertFalse(mods.isEmpty());<a name="line.320"></a>
+<span class="sourceLineNo">321</span><a name="line.321"></a>
+<span class="sourceLineNo">322</span>                parser.identify(struc, mods);<a name="line.322"></a>
+<span class="sourceLineNo">323</span><a name="line.323"></a>
+<span class="sourceLineNo">324</span>                assertFalse(pdbId + " is not false" , <a name="line.324"></a>
+<span class="sourceLineNo">325</span>                                parser.getIdentifiedModifiedCompound().isEmpty());<a name="line.325"></a>
+<span class="sourceLineNo">326</span>                <a name="line.326"></a>
+<span class="sourceLineNo">327</span>                boolean print = false;<a name="line.327"></a>
+<span class="sourceLineNo">328</span>                if (print)<a name="line.328"></a>
+<span class="sourceLineNo">329</span>                        printResult(pdbId, parser, recordUnidentifiable);<a name="line.329"></a>
+<span class="sourceLineNo">330</span>        }<a name="line.330"></a>
+<span class="sourceLineNo">331</span>        <a name="line.331"></a>
+<span class="sourceLineNo">332</span>        private void printResult(String pdbId, ProteinModificationIdentifier parser, boolean recordUnidentifiable) {<a name="line.332"></a>
+<span class="sourceLineNo">333</span>                StringBuilder sb = new StringBuilder();<a name="line.333"></a>
+<span class="sourceLineNo">334</span><a name="line.334"></a>
+<span class="sourceLineNo">335</span>                sb.append("===");<a name="line.335"></a>
+<span class="sourceLineNo">336</span>                sb.append(pdbId);<a name="line.336"></a>
+<span class="sourceLineNo">337</span>                sb.append("===\n");<a name="line.337"></a>
+<span class="sourceLineNo">338</span>                <a name="line.338"></a>
+<span class="sourceLineNo">339</span>                Set&lt;ModifiedCompound&gt; mcs = parser.getIdentifiedModifiedCompound();<a name="line.339"></a>
+<span class="sourceLineNo">340</span>                <a name="line.340"></a>
+<span class="sourceLineNo">341</span>                int i=0;<a name="line.341"></a>
+<span class="sourceLineNo">342</span>                for (ModifiedCompound mc : mcs) {<a name="line.342"></a>
+<span class="sourceLineNo">343</span>                        sb.append("Modification #");<a name="line.343"></a>
+<span class="sourceLineNo">344</span>                        sb.append(++i);<a name="line.344"></a>
+<span class="sourceLineNo">345</span>                        sb.append(":\n");<a name="line.345"></a>
+<span class="sourceLineNo">346</span>                        sb.append(mc);<a name="line.346"></a>
+<span class="sourceLineNo">347</span>                        sb.append('\n');<a name="line.347"></a>
+<span class="sourceLineNo">348</span>                }<a name="line.348"></a>
+<span class="sourceLineNo">349</span>                <a name="line.349"></a>
+<span class="sourceLineNo">350</span>                if (recordUnidentifiable) {<a name="line.350"></a>
+<span class="sourceLineNo">351</span>                        Set&lt;StructureGroup&gt; unidentifiedModifiedResidues = parser.getUnidentifiableModifiedResidues();<a name="line.351"></a>
+<span class="sourceLineNo">352</span>                        i = 0;<a name="line.352"></a>
+<span class="sourceLineNo">353</span>                        for (StructureGroup group : unidentifiedModifiedResidues) {<a name="line.353"></a>
+<span class="sourceLineNo">354</span>                                sb.append("Unidenfied modified residue #");<a name="line.354"></a>
+<span class="sourceLineNo">355</span>                                sb.append(++i);<a name="line.355"></a>
+<span class="sourceLineNo">356</span>                                sb.append(":\n");<a name="line.356"></a>
+<span class="sourceLineNo">357</span>                                sb.append(group);<a name="line.357"></a>
+<span class="sourceLineNo">358</span>                                sb.append('\n');<a name="line.358"></a>
+<span class="sourceLineNo">359</span>                        }<a name="line.359"></a>
+<span class="sourceLineNo">360</span>        <a name="line.360"></a>
+<span class="sourceLineNo">361</span>                        Set&lt;StructureAtomLinkage&gt; unidentifiedLinkages = parser.getUnidentifiableAtomLinkages();<a name="line.361"></a>
+<span class="sourceLineNo">362</span>                        i = 0;<a name="line.362"></a>
+<span class="sourceLineNo">363</span>                        for (StructureAtomLinkage link : unidentifiedLinkages) {<a name="line.363"></a>
+<span class="sourceLineNo">364</span>                                sb.append("Unidenfied linkage #");<a name="line.364"></a>
+<span class="sourceLineNo">365</span>                                sb.append(++i);<a name="line.365"></a>
+<span class="sourceLineNo">366</span>                                sb.append(":\n");<a name="line.366"></a>
+<span class="sourceLineNo">367</span>                                sb.append(link);<a name="line.367"></a>
+<span class="sourceLineNo">368</span>                                sb.append('\n');<a name="line.368"></a>
+<span class="sourceLineNo">369</span>                        }<a name="line.369"></a>
+<span class="sourceLineNo">370</span>                }<a name="line.370"></a>
+<span class="sourceLineNo">371</span>                <a name="line.371"></a>
+<span class="sourceLineNo">372</span>                System.out.println(sb.toString());<a name="line.372"></a>
+<span class="sourceLineNo">373</span>        }<a name="line.373"></a>
+<span class="sourceLineNo">374</span>}<a name="line.374"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

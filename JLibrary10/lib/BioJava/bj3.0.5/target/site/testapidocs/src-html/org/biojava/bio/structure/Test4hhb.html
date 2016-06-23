@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> *                    BioJava development code<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * This code may be freely distributed and modified under the<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * terms of the GNU Lesser General Public Licence.  This should<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * be distributed with the code.  If you do not have a copy,<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * see:<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.gnu.org/copyleft/lesser.html<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Copyright for this code is held jointly by the individual<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * authors.  These should be listed in @author doc comments.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> *<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * For more information on the BioJava project and its aims,<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * or to join the biojava-l mailing list, visit the home page<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * at:<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *<a name="line.17"></a>
+<span class="sourceLineNo">018</span> *      http://www.biojava.org/<a name="line.18"></a>
+<span class="sourceLineNo">019</span> *<a name="line.19"></a>
+<span class="sourceLineNo">020</span> * Created on Oct 5, 2009<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * Author: Andreas Prlic <a name="line.21"></a>
+<span class="sourceLineNo">022</span> *<a name="line.22"></a>
+<span class="sourceLineNo">023</span> */<a name="line.23"></a>
+<span class="sourceLineNo">024</span><a name="line.24"></a>
+<span class="sourceLineNo">025</span>package org.biojava.bio.structure;<a name="line.25"></a>
+<span class="sourceLineNo">026</span><a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.io.IOException;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.io.InputStream;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.util.List;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import java.util.zip.GZIPInputStream;<a name="line.30"></a>
+<span class="sourceLineNo">031</span><a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.biojava.bio.structure.io.FileParsingParameters;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.biojava.bio.structure.io.PDBFileParser;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.biojava.bio.structure.io.mmcif.MMcifParser;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.biojava.bio.structure.io.mmcif.SimpleMMcifConsumer;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.biojava.bio.structure.io.mmcif.SimpleMMcifParser;<a name="line.36"></a>
+<span class="sourceLineNo">037</span><a name="line.37"></a>
+<span class="sourceLineNo">038</span>import junit.framework.TestCase;<a name="line.38"></a>
+<span class="sourceLineNo">039</span><a name="line.39"></a>
+<span class="sourceLineNo">040</span>/** A collection of tests to make sure 4hhb is represented corrrectly.<a name="line.40"></a>
+<span class="sourceLineNo">041</span> *  <a name="line.41"></a>
+<span class="sourceLineNo">042</span> * @author Andreas Prlic<a name="line.42"></a>
+<span class="sourceLineNo">043</span> *<a name="line.43"></a>
+<span class="sourceLineNo">044</span> */<a name="line.44"></a>
+<span class="sourceLineNo">045</span>public class Test4hhb  extends TestCase {<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>        public void test4hhbPDBFile()<a name="line.47"></a>
+<span class="sourceLineNo">048</span>        {<a name="line.48"></a>
+<span class="sourceLineNo">049</span><a name="line.49"></a>
+<span class="sourceLineNo">050</span>                Structure structure = null;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                try {<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                        InputStream inStream = new GZIPInputStream(this.getClass().getResourceAsStream("/4hhb.pdb.gz"));<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                        assertNotNull(inStream);<a name="line.53"></a>
+<span class="sourceLineNo">054</span><a name="line.54"></a>
+<span class="sourceLineNo">055</span>                        PDBFileParser pdbpars = new PDBFileParser();<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                        FileParsingParameters params = new FileParsingParameters();<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                        params.setAlignSeqRes(true);<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                        pdbpars.setFileParsingParameters(params);<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                        //pdbpars.setLoadChemCompInfo(true);<a name="line.59"></a>
+<span class="sourceLineNo">060</span><a name="line.60"></a>
+<span class="sourceLineNo">061</span>                        structure = pdbpars.parsePDBFile(inStream) ;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                } catch (IOException e) {<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                        e.printStackTrace();<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                }<a name="line.64"></a>
+<span class="sourceLineNo">065</span><a name="line.65"></a>
+<span class="sourceLineNo">066</span>                assertNotNull(structure);<a name="line.66"></a>
+<span class="sourceLineNo">067</span><a name="line.67"></a>
+<span class="sourceLineNo">068</span>                assertEquals("structure does not contain four chains ", 4 ,structure.size());<a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>                testStructure(structure);<a name="line.70"></a>
+<span class="sourceLineNo">071</span><a name="line.71"></a>
+<span class="sourceLineNo">072</span><a name="line.72"></a>
+<span class="sourceLineNo">073</span><a name="line.73"></a>
+<span class="sourceLineNo">074</span>                Structure structure2 = null;<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                try {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                        InputStream inStream = new GZIPInputStream(this.getClass().getResourceAsStream("/4hhb.cif.gz"));<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                        assertNotNull(inStream);<a name="line.77"></a>
+<span class="sourceLineNo">078</span><a name="line.78"></a>
+<span class="sourceLineNo">079</span>                        MMcifParser pdbpars = new SimpleMMcifParser();<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                        SimpleMMcifConsumer consumer = new SimpleMMcifConsumer();<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                        FileParsingParameters params = new FileParsingParameters();<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                        params.setAlignSeqRes(true);<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                        consumer.setFileParsingParameters(params);<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                        pdbpars.addMMcifConsumer(consumer);<a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>                        pdbpars.parse(inStream) ;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                        structure2 = consumer.getStructure();<a name="line.87"></a>
+<span class="sourceLineNo">088</span><a name="line.88"></a>
+<span class="sourceLineNo">089</span><a name="line.89"></a>
+<span class="sourceLineNo">090</span>                } catch (IOException e) {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                        e.printStackTrace();<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                }<a name="line.92"></a>
+<span class="sourceLineNo">093</span><a name="line.93"></a>
+<span class="sourceLineNo">094</span>                assertNotNull(structure2);<a name="line.94"></a>
+<span class="sourceLineNo">095</span><a name="line.95"></a>
+<span class="sourceLineNo">096</span>                assertEquals("structure does not contain four chains ", 4 ,structure2.size());<a name="line.96"></a>
+<span class="sourceLineNo">097</span><a name="line.97"></a>
+<span class="sourceLineNo">098</span>                testStructure(structure2);<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                <a name="line.99"></a>
+<span class="sourceLineNo">100</span>                assertEquals(structure.getPDBHeader().toPDB().toLowerCase(),structure2.getPDBHeader().toPDB().toLowerCase());<a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>                for ( int i = 0 ; i &lt; 4 ; i++){<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                        Chain c1 = structure.getChain(i);<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                        Chain c2 = structure.getChain(i);<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                        testEqualChains(c1, c2);<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                }<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        }<a name="line.107"></a>
+<span class="sourceLineNo">108</span><a name="line.108"></a>
+<span class="sourceLineNo">109</span><a name="line.109"></a>
+<span class="sourceLineNo">110</span>        private void testStructure(Structure structure){<a name="line.110"></a>
+<span class="sourceLineNo">111</span><a name="line.111"></a>
+<span class="sourceLineNo">112</span>                List&lt;Chain&gt; chains = structure.getChains();<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                assertEquals("4HHB should have 4 chains. " , 4 , chains.size());<a name="line.113"></a>
+<span class="sourceLineNo">114</span><a name="line.114"></a>
+<span class="sourceLineNo">115</span>                Chain a = chains.get(0);<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                assertEquals("4HHB first chain should be A. " , a.getChainID(), "A");<a name="line.116"></a>
+<span class="sourceLineNo">117</span><a name="line.117"></a>
+<span class="sourceLineNo">118</span>                Chain b = chains.get(1);<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                assertEquals("4HHB second chain should be B. " , b.getChainID(), "B");<a name="line.119"></a>
+<span class="sourceLineNo">120</span><a name="line.120"></a>
+<span class="sourceLineNo">121</span>                Chain c = chains.get(2);<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                assertEquals("4HHB third chain should be C. " , c.getChainID(), "C");<a name="line.122"></a>
+<span class="sourceLineNo">123</span><a name="line.123"></a>
+<span class="sourceLineNo">124</span>                Chain d = chains.get(3);<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                assertEquals("4HHB fourth chain should be D. " , d.getChainID(), "D");<a name="line.125"></a>
+<span class="sourceLineNo">126</span><a name="line.126"></a>
+<span class="sourceLineNo">127</span>                assertTrue("chain " + a.getChainID() + " length should be 141. was: " + a.getAtomGroups(GroupType.AMINOACID).size(), ( a.getAtomGroups(GroupType.AMINOACID).size() == 141 ));<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                assertTrue("chain " + b.getChainID() + " length should be 146. was: " + b.getAtomGroups(GroupType.AMINOACID).size(), ( b.getAtomGroups(GroupType.AMINOACID).size() == 146 ));           <a name="line.128"></a>
+<span class="sourceLineNo">129</span>                assertTrue("chain " + c.getChainID() + " length should be 141. was: " + c.getAtomGroups(GroupType.AMINOACID).size(), ( c.getAtomGroups(GroupType.AMINOACID).size() == 141 ));<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                assertTrue("chain " + d.getChainID() + " length should be 146. was: " + d.getAtomGroups(GroupType.AMINOACID).size(), ( d.getAtomGroups(GroupType.AMINOACID).size() == 146 ));<a name="line.130"></a>
+<span class="sourceLineNo">131</span><a name="line.131"></a>
+<span class="sourceLineNo">132</span>                assertTrue("chain " + a.getChainID() + " length should be 141, but is " + a.getSeqResLength(), ( a.getSeqResLength() == 141 ));<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                assertTrue("chain " + b.getChainID() + " length should be 146.", ( b.getSeqResLength() == 146 ));<a name="line.133"></a>
+<span class="sourceLineNo">134</span><a name="line.134"></a>
+<span class="sourceLineNo">135</span>                assertTrue("chain " + c.getChainID() + " length should be 141.", ( a.getSeqResLength() == 141 ));<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                assertTrue("chain " + d.getChainID() + " length should be 146.", ( b.getSeqResLength() == 146 ));<a name="line.136"></a>
+<span class="sourceLineNo">137</span><a name="line.137"></a>
+<span class="sourceLineNo">138</span>                testEqualChains(a,c);<a name="line.138"></a>
+<span class="sourceLineNo">139</span><a name="line.139"></a>
+<span class="sourceLineNo">140</span>                testEqualChains(b,d);<a name="line.140"></a>
+<span class="sourceLineNo">141</span><a name="line.141"></a>
+<span class="sourceLineNo">142</span>                Chain[] chs = new Chain[]{a,b,c,d};<a name="line.142"></a>
+<span class="sourceLineNo">143</span><a name="line.143"></a>
+<span class="sourceLineNo">144</span>                for (Chain x : chs){<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                        testContainsHem(x);<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                }<a name="line.146"></a>
+<span class="sourceLineNo">147</span><a name="line.147"></a>
+<span class="sourceLineNo">148</span>        }<a name="line.148"></a>
+<span class="sourceLineNo">149</span><a name="line.149"></a>
+<span class="sourceLineNo">150</span>        private void testContainsHem(Chain x) {<a name="line.150"></a>
+<span class="sourceLineNo">151</span><a name="line.151"></a>
+<span class="sourceLineNo">152</span>                boolean containsHem = false;<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                for ( Group g : x.getAtomGroups()){<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                        if ( g.getPDBName().equals("HEM")){<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                                containsHem = true;<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                                break;<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                        }<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                }<a name="line.158"></a>
+<span class="sourceLineNo">159</span><a name="line.159"></a>
+<span class="sourceLineNo">160</span>                assertTrue("Chain " + x.getChainID() + " does not contain a HEM group. " , containsHem);<a name="line.160"></a>
+<span class="sourceLineNo">161</span><a name="line.161"></a>
+<span class="sourceLineNo">162</span>        }<a name="line.162"></a>
+<span class="sourceLineNo">163</span><a name="line.163"></a>
+<span class="sourceLineNo">164</span><a name="line.164"></a>
+<span class="sourceLineNo">165</span>        private void testEqualChains(Chain a,Chain b){<a name="line.165"></a>
+<span class="sourceLineNo">166</span><a name="line.166"></a>
+<span class="sourceLineNo">167</span>                assertEquals("length of seqres " + a.getChainID() + " and "+b.getChainID()+" should be same. " , a.getSeqResLength(), b.getSeqResLength() );<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                assertEquals("length of atom "   + a.getChainID() + " and "+b.getChainID()+" should be same. " , a.getAtomGroups(GroupType.AMINOACID).size(), b.getAtomGroups(GroupType.AMINOACID).size());<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                assertEquals("sequences should be identical. " , a.getAtomSequence(),   b.getAtomSequence());<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                assertEquals("sequences should be identical. " , a.getSeqResSequence(), b.getSeqResSequence());<a name="line.170"></a>
+<span class="sourceLineNo">171</span>        }<a name="line.171"></a>
+<span class="sourceLineNo">172</span><a name="line.172"></a>
+<span class="sourceLineNo">173</span>}<a name="line.173"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

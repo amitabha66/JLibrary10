@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package org.biojava3.alignment.aaindex;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import junit.framework.TestCase;<a name="line.3"></a>
+<span class="sourceLineNo">004</span><a name="line.4"></a>
+<span class="sourceLineNo">005</span>import org.biojava3.alignment.SubstitutionMatrixHelper;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import org.biojava3.alignment.template.SubstitutionMatrix;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import org.biojava3.core.sequence.compound.AminoAcidCompound;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import org.biojava3.core.sequence.compound.AminoAcidCompoundSet;<a name="line.8"></a>
+<span class="sourceLineNo">009</span><a name="line.9"></a>
+<span class="sourceLineNo">010</span><a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>public class TestAAINDEXLoading extends TestCase{<a name="line.12"></a>
+<span class="sourceLineNo">013</span>/**<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * <a name="line.14"></a>
+<span class="sourceLineNo">015</span> * M rows = ARNDCQEGHILKMFPSTWYV, cols = ARNDCQEGHILKMFPSTWYV<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * <a name="line.16"></a>
+<span class="sourceLineNo">017</span> *   A          R               N               D               C               Q               E               G               H               I               L               K               M               F               P               S               T               W               Y               V<a name="line.17"></a>
+<span class="sourceLineNo">018</span>A    2.09<a name="line.18"></a>
+<span class="sourceLineNo">019</span>R   -0.50    2.87<a name="line.19"></a>
+<span class="sourceLineNo">020</span>N   -0.57    0.60    3.60<a name="line.20"></a>
+<span class="sourceLineNo">021</span>D   -0.73    0.13    1.78    4.02<a name="line.21"></a>
+<span class="sourceLineNo">022</span>C    0.33   -1.30   -2.08   -2.51    6.99<a name="line.22"></a>
+<span class="sourceLineNo">023</span>Q   -0.75    0.13    0.33    0.34   -0.83    2.60<a name="line.23"></a>
+<span class="sourceLineNo">024</span>E   -0.12    0.99   -0.16    1.20   -1.97    1.23    2.97<a name="line.24"></a>
+<span class="sourceLineNo">025</span>G    0.27   -0.96    0.79   -1.20   -2.11   -0.12   -0.41    4.36<a name="line.25"></a>
+<span class="sourceLineNo">026</span>H   -1.42    0.54    0.76   -0.01   -1.50   -0.46   -0.62   -0.40    5.89<a name="line.26"></a>
+<span class="sourceLineNo">027</span>I   -0.97   -1.40   -2.43   -2.77    0.13   -1.47   -1.81   -2.93   -1.76    2.76<a name="line.27"></a>
+<span class="sourceLineNo">028</span>L   -0.39   -1.19   -2.10   -2.65   -0.31   -1.49   -2.11   -1.98   -0.93    1.56    2.43<a name="line.28"></a>
+<span class="sourceLineNo">029</span>K   -0.38    1.42    0.83    0.66   -2.19    0.92    1.11   -0.71    0.31   -1.81   -1.96    2.91<a name="line.29"></a>
+<span class="sourceLineNo">030</span>M   -0.04   -0.63   -2.01   -2.58    1.04   -0.13   -1.86   -1.86   -1.04    0.99    1.61   -1.62    3.75<a name="line.30"></a>
+<span class="sourceLineNo">031</span>F   -0.76   -1.40   -2.25   -2.19    1.13   -2.31   -1.61   -2.67   -0.22    0.76    1.23   -2.41    0.80    3.28<a name="line.31"></a>
+<span class="sourceLineNo">032</span>P   -0.53    0.21   -1.10    0.72   -2.19    0.24   -0.26   -0.04   -1.44   -2.00   -1.56   -0.19   -1.09   -0.91    5.45<a name="line.32"></a>
+<span class="sourceLineNo">033</span>S    0.34   -0.06    0.40    0.71    0.31    1.04    0.31    0.29   -0.74   -1.75   -2.30   -0.06   -1.34   -1.11   -0.29    2.36<a name="line.33"></a>
+<span class="sourceLineNo">034</span>T    0.13   -0.15    0.30   -0.75   -0.59    0.60   -0.21   -0.81   -0.52   -0.96   -0.86   -0.10   -1.58   -0.69    0.93    1.20    2.04<a name="line.34"></a>
+<span class="sourceLineNo">035</span>W   -0.66   -0.04   -2.89   -1.91   -0.76   -0.81   -2.70   -1.21   -1.48    0.25   -0.14   -1.94    0.87    2.29   -5.34   -1.18   -0.57    6.96<a name="line.35"></a>
+<span class="sourceLineNo">036</span>Y   -1.25   -0.75   -0.36   -1.21    0.13   -0.61   -1.64   -1.62   -0.12    0.08    0.70   -1.72   -0.41    1.96   -1.98   -1.56   -0.41    2.15    3.95<a name="line.36"></a>
+<span class="sourceLineNo">037</span>V    0.02   -1.52   -2.17   -2.02    0.34   -1.38   -1.84   -1.96   -0.35    1.94    0.81   -1.27    0.61    0.51   -1.11   -1.11    0.05   -1.09    0.21    2.05<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span> */<a name="line.39"></a>
+<span class="sourceLineNo">040</span>        public void testSDMmatrix(){<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                String matrixName = "PRLA000101";<a name="line.41"></a>
+<span class="sourceLineNo">042</span>        <a name="line.42"></a>
+<span class="sourceLineNo">043</span>                SubstitutionMatrix&lt;AminoAcidCompound&gt; sdm = SubstitutionMatrixHelper.getMatrixFromAAINDEX(matrixName);<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                <a name="line.44"></a>
+<span class="sourceLineNo">045</span>                int scale = 1;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>                if ( sdm instanceof ScaledSubstitutionMatrix) {<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                        ScaledSubstitutionMatrix scaledSDM = (ScaledSubstitutionMatrix)sdm;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                        scale = scaledSDM.getScale();<a name="line.48"></a>
+<span class="sourceLineNo">049</span>                        assertEquals(100,scale);<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                }<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                <a name="line.51"></a>
+<span class="sourceLineNo">052</span>                <a name="line.52"></a>
+<span class="sourceLineNo">053</span>                AminoAcidCompoundSet aas = AminoAcidCompoundSet.getAminoAcidCompoundSet();<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                <a name="line.54"></a>
+<span class="sourceLineNo">055</span>                AminoAcidCompound v = aas.getCompoundForString("V");<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                AminoAcidCompound w = aas.getCompoundForString("W");<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                AminoAcidCompound r = aas.getCompoundForString("R");<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                AminoAcidCompound n = aas.getCompoundForString("N");<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                <a name="line.59"></a>
+<span class="sourceLineNo">060</span>                short rn = sdm.getValue(r,n);           <a name="line.60"></a>
+<span class="sourceLineNo">061</span>                assertEquals(60,rn);<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                <a name="line.62"></a>
+<span class="sourceLineNo">063</span>                short nr = sdm.getValue(n,r);<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                assertEquals(rn,nr);<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                <a name="line.65"></a>
+<span class="sourceLineNo">066</span>                <a name="line.66"></a>
+<span class="sourceLineNo">067</span>                short vv = sdm.getValue(v,v);           <a name="line.67"></a>
+<span class="sourceLineNo">068</span>                assertEquals(205,vv);<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                <a name="line.69"></a>
+<span class="sourceLineNo">070</span>                short vw = sdm.getValue(v,w);<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                assertEquals( -109,vw);<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                <a name="line.72"></a>
+<span class="sourceLineNo">073</span>                short wv = sdm.getValue(w,v);<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                assertEquals(vw,wv);<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                <a name="line.75"></a>
+<span class="sourceLineNo">076</span>        <a name="line.76"></a>
+<span class="sourceLineNo">077</span>        <a name="line.77"></a>
+<span class="sourceLineNo">078</span>           <a name="line.78"></a>
+<span class="sourceLineNo">079</span>        }<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        <a name="line.80"></a>
+<span class="sourceLineNo">081</span>        <a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span><a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>        /*<a name="line.86"></a>
+<span class="sourceLineNo">087</span>         * <a name="line.87"></a>
+<span class="sourceLineNo">088</span>         * M rows = ACDEFGHIKLMNPQRSTVWYJ-, cols = ACDEFGHIKLMNPQRSTVWYJ<a name="line.88"></a>
+<span class="sourceLineNo">089</span>         * <a name="line.89"></a>
+<span class="sourceLineNo">090</span>         * <a name="line.90"></a>
+<span class="sourceLineNo">091</span>         A              C               D               E               F               G               H               I               K               L               M               N               P               Q               R               S               T               V               W               Y               J <a name="line.91"></a>
+<span class="sourceLineNo">092</span>A   0.224   0.013   0.055   0.068   0.031   0.067   0.048   0.053   0.068   0.050   0.087   0.059   0.067   0.073   0.062   0.074   0.059   0.079   0.033   0.035   0.121<a name="line.92"></a>
+<span class="sourceLineNo">093</span>C   0.002   0.739   0.001   0.006   0.012   0.000   0.001   0.004   0.003   0.000   0.000   0.001   0.001   0.005   0.008   0.001   0.001   0.000   0.001   0.000   0.008<a name="line.93"></a>
+<span class="sourceLineNo">094</span>D   0.044   0.007   0.284   0.091   0.016   0.041   0.056   0.033   0.034   0.012   0.022   0.094   0.047   0.052   0.025   0.054   0.044   0.025   0.014   0.023   0.030<a name="line.94"></a>
+<span class="sourceLineNo">095</span>E   0.052   0.029   0.079   0.251   0.016   0.028   0.026   0.026   0.053   0.019   0.031   0.038   0.037   0.071   0.049   0.031   0.044   0.034   0.010   0.027   0.008<a name="line.95"></a>
+<span class="sourceLineNo">096</span>F   0.010   0.029   0.006   0.008   0.291   0.004   0.023   0.046   0.011   0.047   0.032   0.012   0.006   0.010   0.009   0.011   0.013   0.018   0.093   0.073   0.000<a name="line.96"></a>
+<span class="sourceLineNo">097</span>G   0.079   0.000   0.066   0.047   0.020   0.455   0.042   0.024   0.033   0.028   0.039   0.073   0.054   0.054   0.040   0.064   0.037   0.039   0.041   0.036   0.038<a name="line.97"></a>
+<span class="sourceLineNo">098</span>H   0.013   0.003   0.021   0.011   0.024   0.010   0.284   0.008   0.021   0.011   0.020   0.035   0.008   0.020   0.023   0.013   0.012   0.020   0.014   0.025   0.023<a name="line.98"></a>
+<span class="sourceLineNo">099</span>I   0.014   0.016   0.017   0.014   0.058   0.006   0.010   0.235   0.015   0.050   0.048   0.018   0.009   0.009   0.015   0.014   0.023   0.075   0.015   0.030   0.008<a name="line.99"></a>
+<span class="sourceLineNo">100</span>K   0.062   0.007   0.039   0.072   0.032   0.027   0.068   0.039   0.294   0.050   0.077   0.055   0.045   0.077   0.122   0.043   0.059   0.044   0.037   0.035   0.053<a name="line.100"></a>
+<span class="sourceLineNo">101</span>L   0.028   0.000   0.010   0.017   0.097   0.013   0.024   0.094   0.035   0.311   0.141   0.030   0.030   0.028   0.027   0.019   0.029   0.073   0.064   0.033   0.015<a name="line.101"></a>
+<span class="sourceLineNo">102</span>M   0.010   0.000   0.003   0.005   0.015   0.005   0.005   0.020   0.011   0.030   0.167   0.004   0.003   0.017   0.005   0.003   0.007   0.013   0.004   0.008   0.015<a name="line.102"></a>
+<span class="sourceLineNo">103</span>N   0.041   0.007   0.080   0.041   0.022   0.044   0.087   0.031   0.042   0.035   0.024   0.239   0.019   0.040   0.031   0.050   0.051   0.021   0.008   0.036   0.030<a name="line.103"></a>
+<span class="sourceLineNo">104</span>P   0.053   0.000   0.039   0.036   0.036   0.006   0.027   0.018   0.017   0.034   0.014   0.018   0.412   0.021   0.026   0.037   0.031   0.019   0.018   0.008   0.015<a name="line.104"></a>
+<span class="sourceLineNo">105</span>Q   0.040   0.013   0.038   0.060   0.018   0.025   0.042   0.017   0.046   0.026   0.075   0.032   0.019   0.231   0.056   0.032   0.042   0.036   0.007   0.015   0.023<a name="line.105"></a>
+<span class="sourceLineNo">106</span>R   0.025   0.023   0.015   0.031   0.010   0.017   0.033   0.017   0.062   0.019   0.015   0.022   0.018   0.047   0.248   0.026   0.028   0.022   0.022   0.023   0.000<a name="line.106"></a>
+<span class="sourceLineNo">107</span>S   0.100   0.013   0.088   0.059   0.044   0.073   0.057   0.051   0.062   0.043   0.026   0.096   0.070   0.072   0.079   0.290   0.138   0.057   0.025   0.059   0.053<a name="line.107"></a>
+<span class="sourceLineNo">108</span>T   0.054   0.010   0.049   0.058   0.042   0.029   0.037   0.059   0.058   0.039   0.049   0.068   0.042   0.066   0.053   0.099   0.266   0.061   0.021   0.041   0.015<a name="line.108"></a>
+<span class="sourceLineNo">109</span>V   0.041   0.000   0.021   0.033   0.040   0.020   0.038   0.148   0.031   0.077   0.051   0.018   0.020   0.043   0.033   0.028   0.044   0.269   0.023   0.049   0.091<a name="line.109"></a>
+<span class="sourceLineNo">110</span>W   0.005   0.000   0.002   0.002   0.049   0.006   0.006   0.009   0.006   0.017   0.005   0.003   0.004   0.003   0.008   0.003   0.004   0.003   0.421   0.038   0.000<a name="line.110"></a>
+<span class="sourceLineNo">111</span>Y   0.014   0.000   0.013   0.018   0.111   0.012   0.034   0.028   0.017   0.023   0.026   0.023   0.005   0.012   0.024   0.018   0.019   0.028   0.109   0.355   0.023<a name="line.111"></a>
+<span class="sourceLineNo">112</span>J   0.002   0.000   0.001   0.000   0.001   0.002   0.002   0.001   0.002   0.001   0.003   0.001   0.001   0.001   0.001   0.002   0.001   0.007   0.000   0.001   0.341<a name="line.112"></a>
+<span class="sourceLineNo">113</span>-   0.086   0.092   0.072   0.072   0.045   0.089   0.060   0.043   0.061   0.075   0.048   0.061   0.083   0.050   0.056   0.087   0.050   0.057   0.021   0.048   0.091<a name="line.113"></a>
+<span class="sourceLineNo">114</span>//<a name="line.114"></a>
+<span class="sourceLineNo">115</span>         * <a name="line.115"></a>
+<span class="sourceLineNo">116</span>         * <a name="line.116"></a>
+<span class="sourceLineNo">117</span>         */<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        <a name="line.118"></a>
+<span class="sourceLineNo">119</span>        public void testOVEJ920104(){<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                String name = "OVEJ920104";<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                SubstitutionMatrix&lt;AminoAcidCompound&gt; max = SubstitutionMatrixHelper.getMatrixFromAAINDEX(name);<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                <a name="line.122"></a>
+<span class="sourceLineNo">123</span>                if ( max instanceof ScaledSubstitutionMatrix) {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                        ScaledSubstitutionMatrix scaledMAX = (ScaledSubstitutionMatrix) max;<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                        int scale = scaledMAX.getScale();<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                        <a name="line.126"></a>
+<span class="sourceLineNo">127</span>                        assertEquals(1000,scale);<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                }<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                                <a name="line.129"></a>
+<span class="sourceLineNo">130</span>                AminoAcidCompoundSet aas = AminoAcidCompoundSet.getAminoAcidCompoundSet();<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                <a name="line.131"></a>
+<span class="sourceLineNo">132</span>                AminoAcidCompound minus = aas.getCompoundForString("-");<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                <a name="line.133"></a>
+<span class="sourceLineNo">134</span>                AminoAcidCompound j = aas.getCompoundForString("J");<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                AminoAcidCompound y = aas.getCompoundForString("Y");<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                AminoAcidCompound a = aas.getCompoundForString("A");<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                <a name="line.137"></a>
+<span class="sourceLineNo">138</span>                short ay = max.getValue(a,y);<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                assertEquals(35,ay);<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                <a name="line.140"></a>
+<span class="sourceLineNo">141</span>                <a name="line.141"></a>
+<span class="sourceLineNo">142</span>                short ya = max.getValue(y,a);<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                assertEquals(14,ya);<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                <a name="line.144"></a>
+<span class="sourceLineNo">145</span>                short minusa = max.getValue(minus, a);<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                assertEquals(86, minusa);<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                <a name="line.147"></a>
+<span class="sourceLineNo">148</span>                short minusy = max.getValue(minus, y);          <a name="line.148"></a>
+<span class="sourceLineNo">149</span>                assertEquals( 48,minusy);<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                <a name="line.150"></a>
+<span class="sourceLineNo">151</span>                short minusj = max.getValue(minus, j);          <a name="line.151"></a>
+<span class="sourceLineNo">152</span>                assertEquals( 91,minusj);<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                <a name="line.153"></a>
+<span class="sourceLineNo">154</span>        }<a name="line.154"></a>
+<span class="sourceLineNo">155</span>        <a name="line.155"></a>
+<span class="sourceLineNo">156</span>}<a name="line.156"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package org.biojava3.core.sequence;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import org.biojava3.core.sequence.template.SequenceReader;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import static org.hamcrest.CoreMatchers.is;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import static org.junit.Assert.assertThat;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import static org.junit.Assert.assertTrue;<a name="line.6"></a>
+<span class="sourceLineNo">007</span><a name="line.7"></a>
+<span class="sourceLineNo">008</span>import java.util.ArrayList;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import java.util.Arrays;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import java.util.List;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import java.util.Map;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import junit.framework.Assert;<a name="line.12"></a>
+<span class="sourceLineNo">013</span><a name="line.13"></a>
+<span class="sourceLineNo">014</span>import org.biojava3.core.exceptions.CompoundNotFoundError;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import org.biojava3.core.sequence.compound.AmbiguityDNACompoundSet;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import org.biojava3.core.sequence.compound.DNACompoundSet;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import org.biojava3.core.sequence.compound.NucleotideCompound;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import org.biojava3.core.sequence.storage.BitSequenceReader;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import org.biojava3.core.sequence.storage.FourBitSequenceReader;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import org.biojava3.core.sequence.storage.SingleCompoundSequenceReader;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import org.biojava3.core.sequence.storage.TwoBitSequenceReader;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import org.biojava3.core.sequence.template.CompoundSet;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import org.biojava3.core.sequence.template.ProxySequenceReader;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import org.biojava3.core.sequence.template.SequenceMixin;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import org.biojava3.core.sequence.template.SequenceView;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.biojava3.core.sequence.transcription.Frame;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.biojava3.core.sequence.views.ComplementSequenceView;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.biojava3.core.sequence.views.ReversedSequenceView;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import org.junit.Test;<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>public class DNATest {<a name="line.31"></a>
+<span class="sourceLineNo">032</span><a name="line.32"></a>
+<span class="sourceLineNo">033</span>    private DNACompoundSet set = new DNACompoundSet();<a name="line.33"></a>
+<span class="sourceLineNo">034</span>    private AmbiguityDNACompoundSet ambiguity = new AmbiguityDNACompoundSet();<a name="line.34"></a>
+<span class="sourceLineNo">035</span><a name="line.35"></a>
+<span class="sourceLineNo">036</span>    @Test<a name="line.36"></a>
+<span class="sourceLineNo">037</span>    public void reverseComplement() {<a name="line.37"></a>
+<span class="sourceLineNo">038</span>        String s = getSeq().getInverse().getSequenceAsString();<a name="line.38"></a>
+<span class="sourceLineNo">039</span>        assertThat("Reversed Complemented sequence not as expected", s, is("GCAT"));<a name="line.39"></a>
+<span class="sourceLineNo">040</span>    }<a name="line.40"></a>
+<span class="sourceLineNo">041</span><a name="line.41"></a>
+<span class="sourceLineNo">042</span>    @Test<a name="line.42"></a>
+<span class="sourceLineNo">043</span>    public void complement() {<a name="line.43"></a>
+<span class="sourceLineNo">044</span>        String s = new ComplementSequenceView&lt;NucleotideCompound&gt;(getSeq()).getSequenceAsString();<a name="line.44"></a>
+<span class="sourceLineNo">045</span>        assertThat("Complemented sequence not as expected", s, is("TACG"));<a name="line.45"></a>
+<span class="sourceLineNo">046</span>    }<a name="line.46"></a>
+<span class="sourceLineNo">047</span><a name="line.47"></a>
+<span class="sourceLineNo">048</span>    @Test<a name="line.48"></a>
+<span class="sourceLineNo">049</span>    public void reverse() {<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        SequenceView&lt;NucleotideCompound&gt; r = new ReversedSequenceView&lt;NucleotideCompound&gt;(getSeq());<a name="line.50"></a>
+<span class="sourceLineNo">051</span>        assertThat("Reversed sequence not as expected", r.getSequenceAsString(), is("CGTA"));<a name="line.51"></a>
+<span class="sourceLineNo">052</span>        assertThat("Base at 2 not right", r.getCompoundAt(2).toString(), is("G"));<a name="line.52"></a>
+<span class="sourceLineNo">053</span><a name="line.53"></a>
+<span class="sourceLineNo">054</span>        List&lt;String&gt; actual = new ArrayList&lt;String&gt;();<a name="line.54"></a>
+<span class="sourceLineNo">055</span>        List&lt;String&gt; expected = Arrays.asList("C", "G", "T", "A");<a name="line.55"></a>
+<span class="sourceLineNo">056</span>        for (NucleotideCompound c : r) {<a name="line.56"></a>
+<span class="sourceLineNo">057</span>            actual.add(c.toString());<a name="line.57"></a>
+<span class="sourceLineNo">058</span>        }<a name="line.58"></a>
+<span class="sourceLineNo">059</span>        assertThat("Iterator not behaving as expected", actual, is(expected));<a name="line.59"></a>
+<span class="sourceLineNo">060</span><a name="line.60"></a>
+<span class="sourceLineNo">061</span>        assertThat("Index of T not as expected", r.getIndexOf(set.getCompoundForString("T")), is(3));<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    }<a name="line.62"></a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span>    @Test<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    public void subSequence() {<a name="line.65"></a>
+<span class="sourceLineNo">066</span>        DNASequence seq = getSeq("ACGTGGC");<a name="line.66"></a>
+<span class="sourceLineNo">067</span>        SequenceView&lt;NucleotideCompound&gt; subSeq = seq.getSubSequence(2, 4);<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        assertThat("Index 2 is the same as index 1 in the sub sequence",<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                seq.getCompoundAt(2), is(subSeq.getCompoundAt(1)));<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        assertThat("Length is equal to 3", subSeq.getLength(), is (3));<a name="line.70"></a>
+<span class="sourceLineNo">071</span>        assertThat("Index 4 is the same as index 3 in the sub sequence",<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                seq.getCompoundAt(4), is(subSeq.getCompoundAt(3)));<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        assertThat("Sub sequence contains only expected bases",<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                subSeq.getSequenceAsString(), is("CGT"));<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    }<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>    @Test<a name="line.77"></a>
+<span class="sourceLineNo">078</span>    public void translateToRna() {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>        String s = getSeq("ATGGCGGCGCTGAGCGGT").getRNASequence().getSequenceAsString();<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        assertThat("RNA as expected", s, is("AUGGCGGCGCUGAGCGGU"));<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        String s2 = getSeq("ATGGCGGCGCTGAGCGGT").getRNASequence(Frame.TWO).getSequenceAsString();<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        assertThat("RNA as expected", s2, is("UGGCGGCGCUGAGCGGU"));<a name="line.82"></a>
+<span class="sourceLineNo">083</span>    }<a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span>    @Test<a name="line.85"></a>
+<span class="sourceLineNo">086</span>    public void respectCase() {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        String s = "ATgc";<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        DNASequence dna = getSeq(s);<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        assertThat("Sequence does not remember casing", dna.getSequenceAsString(), is(s));<a name="line.89"></a>
+<span class="sourceLineNo">090</span>        assertThat("Reversed complement sequence forgets case",<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                dna.getInverse().getSequenceAsString(), is("gcAT"));<a name="line.91"></a>
+<span class="sourceLineNo">092</span>    }<a name="line.92"></a>
+<span class="sourceLineNo">093</span><a name="line.93"></a>
+<span class="sourceLineNo">094</span>    @Test(expected = CompoundNotFoundError.class)<a name="line.94"></a>
+<span class="sourceLineNo">095</span>    public void bogusSequence() {<a name="line.95"></a>
+<span class="sourceLineNo">096</span>        getSeq("ATGCx");<a name="line.96"></a>
+<span class="sourceLineNo">097</span>    }<a name="line.97"></a>
+<span class="sourceLineNo">098</span><a name="line.98"></a>
+<span class="sourceLineNo">099</span>    @Test<a name="line.99"></a>
+<span class="sourceLineNo">100</span>    public void basesEqual() {<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        boolean equal = set.compoundsEqual(set.getCompoundForString("a"),<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                set.getCompoundForString("A"));<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        assertTrue("a &amp; A should be equal bases", equal);<a name="line.103"></a>
+<span class="sourceLineNo">104</span>    }<a name="line.104"></a>
+<span class="sourceLineNo">105</span><a name="line.105"></a>
+<span class="sourceLineNo">106</span>    @Test<a name="line.106"></a>
+<span class="sourceLineNo">107</span>    public void basesEquivalent() {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        assertBaseEquivalence(ambiguity, "N", "A");<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        assertBaseEquivalence(ambiguity, "G", "K");<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        assertBaseEquivalence(ambiguity, "V", "C");<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        assertBaseEquivalence(ambiguity, "W", "T");<a name="line.111"></a>
+<span class="sourceLineNo">112</span><a name="line.112"></a>
+<span class="sourceLineNo">113</span>        assertBaseEquivalence(ambiguity, "n", "A");<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        assertBaseEquivalence(ambiguity, "g", "K");<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        assertBaseEquivalence(ambiguity, "v", "C");<a name="line.115"></a>
+<span class="sourceLineNo">116</span>        assertBaseEquivalence(ambiguity, "w", "T");<a name="line.116"></a>
+<span class="sourceLineNo">117</span>    }<a name="line.117"></a>
+<span class="sourceLineNo">118</span><a name="line.118"></a>
+<span class="sourceLineNo">119</span>    @Test<a name="line.119"></a>
+<span class="sourceLineNo">120</span>    public void gc() {<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        assertThat("GC content not as expected", SequenceMixin.countGC(getSeq("GCGC")), is(4));<a name="line.121"></a>
+<span class="sourceLineNo">122</span>        assertThat("GC content not as expected", getSeq("GCGC").getGCCount(), is(4));<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        assertThat("GC content not as expected", SequenceMixin.countGC(getSeq("GAAC")), is(2));<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        assertThat("GC content not as expected",<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                SequenceMixin.countGC(getSeq("AATTTATATGAATTTATATGAATTTATATGAATTTATATGAATTTATATGAATTTATATGAATTTATATGAATTTATATGAATTTATATG")),<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                is(9));<a name="line.126"></a>
+<span class="sourceLineNo">127</span>    }<a name="line.127"></a>
+<span class="sourceLineNo">128</span><a name="line.128"></a>
+<span class="sourceLineNo">129</span>    @Test<a name="line.129"></a>
+<span class="sourceLineNo">130</span>    public void at() {<a name="line.130"></a>
+<span class="sourceLineNo">131</span>        assertThat("AT content not as expected", SequenceMixin.countAT(getSeq("GCGC")), is(0));<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        assertThat("AT content not as expected", SequenceMixin.countAT(getSeq("GCAT")), is(2));<a name="line.132"></a>
+<span class="sourceLineNo">133</span>        assertThat("AT content not as expected", SequenceMixin.countAT(getSeq("atAT")), is(4));<a name="line.133"></a>
+<span class="sourceLineNo">134</span>        assertThat("GC content not as expected",<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                SequenceMixin.countAT(getSeq("AATTTATATGAATTTATATGAATTTATATGAATTTATATGAATTTATATGAATTTATATGAATTTATATGAATTTATATGAATTTATATG")),<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                is(81));<a name="line.136"></a>
+<span class="sourceLineNo">137</span>    }<a name="line.137"></a>
+<span class="sourceLineNo">138</span><a name="line.138"></a>
+<span class="sourceLineNo">139</span>    @Test<a name="line.139"></a>
+<span class="sourceLineNo">140</span>    public void composition() {<a name="line.140"></a>
+<span class="sourceLineNo">141</span>        DNASequence seq = getSeq("ATTGGGCCCC");<a name="line.141"></a>
+<span class="sourceLineNo">142</span>        CompoundSet&lt;NucleotideCompound&gt; set = seq.getCompoundSet();<a name="line.142"></a>
+<span class="sourceLineNo">143</span>        Map&lt;NucleotideCompound, Double&gt; distribution = SequenceMixin.getDistribution(seq);<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        assertThat("A distribution not as expected", distribution.get(set.getCompoundForString("A")), is(0.1));<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        assertThat("T distribution not as expected", distribution.get(set.getCompoundForString("T")), is(0.2));<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        assertThat("G distribution not as expected", distribution.get(set.getCompoundForString("G")), is(0.3));<a name="line.146"></a>
+<span class="sourceLineNo">147</span>        assertThat("C distribution not as expected", distribution.get(set.getCompoundForString("C")), is(0.4));<a name="line.147"></a>
+<span class="sourceLineNo">148</span>    }<a name="line.148"></a>
+<span class="sourceLineNo">149</span><a name="line.149"></a>
+<span class="sourceLineNo">150</span>    @Test<a name="line.150"></a>
+<span class="sourceLineNo">151</span>    public void twoBit() {<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        String expected = "ATGCAACTGA";<a name="line.152"></a>
+<span class="sourceLineNo">153</span>        DNASequence seq = getSeq(expected);<a name="line.153"></a>
+<span class="sourceLineNo">154</span>        SequenceReader&lt;NucleotideCompound&gt; twoBitFromSeq =<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                new TwoBitSequenceReader&lt;NucleotideCompound&gt;(seq);<a name="line.155"></a>
+<span class="sourceLineNo">156</span><a name="line.156"></a>
+<span class="sourceLineNo">157</span>        //being cheeky here &amp; getting compound set from seq<a name="line.157"></a>
+<span class="sourceLineNo">158</span>        SequenceReader&lt;NucleotideCompound&gt; twoBitFromString =<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                new TwoBitSequenceReader&lt;NucleotideCompound&gt;(expected, seq.getCompoundSet());<a name="line.159"></a>
+<span class="sourceLineNo">160</span><a name="line.160"></a>
+<span class="sourceLineNo">161</span>        assertThat("TwoBit from Sequence not as expected", twoBitFromSeq.getSequenceAsString(), is(expected));<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        assertThat("TwoBit from String not as expected", twoBitFromString.getSequenceAsString(), is(expected));<a name="line.162"></a>
+<span class="sourceLineNo">163</span>    }<a name="line.163"></a>
+<span class="sourceLineNo">164</span><a name="line.164"></a>
+<span class="sourceLineNo">165</span>    @Test<a name="line.165"></a>
+<span class="sourceLineNo">166</span>    public void fourBit() {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>        String expected = "ATGCAACTGA";<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        DNASequence seq = getSeq(expected);<a name="line.168"></a>
+<span class="sourceLineNo">169</span>        SequenceReader&lt;NucleotideCompound&gt; bitFromSeq =<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                new FourBitSequenceReader&lt;NucleotideCompound&gt;(seq);<a name="line.170"></a>
+<span class="sourceLineNo">171</span><a name="line.171"></a>
+<span class="sourceLineNo">172</span>        //being cheeky here &amp; getting compound set from seq<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        SequenceReader&lt;NucleotideCompound&gt; bitFromString =<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                new FourBitSequenceReader&lt;NucleotideCompound&gt;(expected, seq.getCompoundSet());<a name="line.174"></a>
+<span class="sourceLineNo">175</span><a name="line.175"></a>
+<span class="sourceLineNo">176</span>        assertThat("FourBit from Sequence not as expected", bitFromSeq.getSequenceAsString(), is(expected));<a name="line.176"></a>
+<span class="sourceLineNo">177</span>        assertThat("FourBit from String not as expected", bitFromString.getSequenceAsString(), is(expected));<a name="line.177"></a>
+<span class="sourceLineNo">178</span>    }<a name="line.178"></a>
+<span class="sourceLineNo">179</span><a name="line.179"></a>
+<span class="sourceLineNo">180</span>    @Test(expected = IllegalStateException.class)<a name="line.180"></a>
+<span class="sourceLineNo">181</span>    public void badTwoBit() {<a name="line.181"></a>
+<span class="sourceLineNo">182</span>        DNASequence seq = getSeq();<a name="line.182"></a>
+<span class="sourceLineNo">183</span>        new TwoBitSequenceReader&lt;NucleotideCompound&gt;("ATNGC", seq.getCompoundSet());<a name="line.183"></a>
+<span class="sourceLineNo">184</span>    }<a name="line.184"></a>
+<span class="sourceLineNo">185</span><a name="line.185"></a>
+<span class="sourceLineNo">186</span>    @Test<a name="line.186"></a>
+<span class="sourceLineNo">187</span>    public void singleCompoundSequence() {<a name="line.187"></a>
+<span class="sourceLineNo">188</span>        CompoundSet&lt;NucleotideCompound&gt; cs = set;<a name="line.188"></a>
+<span class="sourceLineNo">189</span>        NucleotideCompound a = cs.getCompoundForString("A");<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        NucleotideCompound n = cs.getCompoundForString("N");<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        int length = 1000;<a name="line.191"></a>
+<span class="sourceLineNo">192</span><a name="line.192"></a>
+<span class="sourceLineNo">193</span>        ProxySequenceReader&lt;NucleotideCompound&gt; sr = new SingleCompoundSequenceReader&lt;NucleotideCompound&gt;(n, cs, length);<a name="line.193"></a>
+<span class="sourceLineNo">194</span>        DNASequence seq = new DNASequence(sr);<a name="line.194"></a>
+<span class="sourceLineNo">195</span><a name="line.195"></a>
+<span class="sourceLineNo">196</span>        int intCount = 0;<a name="line.196"></a>
+<span class="sourceLineNo">197</span>        int iteratorCount = 0;<a name="line.197"></a>
+<span class="sourceLineNo">198</span>        for (int i = 1; i &lt;= seq.getLength(); i++) {<a name="line.198"></a>
+<span class="sourceLineNo">199</span>            if (seq.getCompoundAt(i).equals(n)) {<a name="line.199"></a>
+<span class="sourceLineNo">200</span>                intCount++;<a name="line.200"></a>
+<span class="sourceLineNo">201</span>            }<a name="line.201"></a>
+<span class="sourceLineNo">202</span>        }<a name="line.202"></a>
+<span class="sourceLineNo">203</span>        for (NucleotideCompound c : seq) {<a name="line.203"></a>
+<span class="sourceLineNo">204</span>            if (c.equals(n)) {<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                iteratorCount++;<a name="line.205"></a>
+<span class="sourceLineNo">206</span>            }<a name="line.206"></a>
+<span class="sourceLineNo">207</span>        }<a name="line.207"></a>
+<span class="sourceLineNo">208</span><a name="line.208"></a>
+<span class="sourceLineNo">209</span>        assertThat("All positions from getCompoundAt() report N", intCount, is(length));<a name="line.209"></a>
+<span class="sourceLineNo">210</span>        assertThat("All positions from iterator report N", iteratorCount, is(length));<a name="line.210"></a>
+<span class="sourceLineNo">211</span>        assertThat("Non N compound reports -ve", seq.getIndexOf(a), is(-1));<a name="line.211"></a>
+<span class="sourceLineNo">212</span>        assertThat("Index of N compound reports 1", seq.getIndexOf(n), is(1));<a name="line.212"></a>
+<span class="sourceLineNo">213</span>        assertThat("Non N compound reports -ve", seq.getLastIndexOf(a), is(-1));<a name="line.213"></a>
+<span class="sourceLineNo">214</span>        assertThat("Last index of N compound reports length", seq.getLastIndexOf(n), is(length));<a name="line.214"></a>
+<span class="sourceLineNo">215</span>    }<a name="line.215"></a>
+<span class="sourceLineNo">216</span><a name="line.216"></a>
+<span class="sourceLineNo">217</span>    @Test<a name="line.217"></a>
+<span class="sourceLineNo">218</span>    public void kmerNonOverlap() {<a name="line.218"></a>
+<span class="sourceLineNo">219</span>        DNASequence d = new DNASequence("ATGTGCA");<a name="line.219"></a>
+<span class="sourceLineNo">220</span>        List&lt;SequenceView&lt;NucleotideCompound&gt;&gt; l =<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                SequenceMixin.nonOverlappingKmers(d, 3);<a name="line.221"></a>
+<span class="sourceLineNo">222</span>        assertThat("Asserting we generate only 2 k-mers", l.size(), is(2));<a name="line.222"></a>
+<span class="sourceLineNo">223</span>        assertThat("Asserting first k-mer", l.get(0).getSequenceAsString(), is("ATG"));<a name="line.223"></a>
+<span class="sourceLineNo">224</span>        assertThat("Asserting second k-mer", l.get(1).getSequenceAsString(), is("TGC"));<a name="line.224"></a>
+<span class="sourceLineNo">225</span>    }<a name="line.225"></a>
+<span class="sourceLineNo">226</span><a name="line.226"></a>
+<span class="sourceLineNo">227</span>    @Test<a name="line.227"></a>
+<span class="sourceLineNo">228</span>    public void kmerOverlap() {<a name="line.228"></a>
+<span class="sourceLineNo">229</span>        DNASequence d = new DNASequence("ATGTT");<a name="line.229"></a>
+<span class="sourceLineNo">230</span>        List&lt;SequenceView&lt;NucleotideCompound&gt;&gt; l =<a name="line.230"></a>
+<span class="sourceLineNo">231</span>                SequenceMixin.overlappingKmers(d, 3);<a name="line.231"></a>
+<span class="sourceLineNo">232</span>        assertThat("Asserting we generate only 3 k-mers", l.size(), is(3));<a name="line.232"></a>
+<span class="sourceLineNo">233</span>        assertThat("Asserting first k-mer", l.get(0).getSequenceAsString(), is("ATG"));<a name="line.233"></a>
+<span class="sourceLineNo">234</span>        assertThat("Asserting second k-mer", l.get(1).getSequenceAsString(), is("TGT"));<a name="line.234"></a>
+<span class="sourceLineNo">235</span>        assertThat("Asserting second k-mer", l.get(2).getSequenceAsString(), is("GTT"));<a name="line.235"></a>
+<span class="sourceLineNo">236</span>    }<a name="line.236"></a>
+<span class="sourceLineNo">237</span><a name="line.237"></a>
+<span class="sourceLineNo">238</span>    @Test<a name="line.238"></a>
+<span class="sourceLineNo">239</span>    public void kmerOverlapExceedingSequenceLength() {<a name="line.239"></a>
+<span class="sourceLineNo">240</span>        DNASequence d = new DNASequence("ATGTT");<a name="line.240"></a>
+<span class="sourceLineNo">241</span>        List&lt;SequenceView&lt;NucleotideCompound&gt;&gt; l =<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                SequenceMixin.overlappingKmers(d, 2);<a name="line.242"></a>
+<span class="sourceLineNo">243</span>        assertThat("Asserting we generate 4 k-mers", l.size(), is(4));<a name="line.243"></a>
+<span class="sourceLineNo">244</span>        assertThat("Asserting first k-mer", l.get(0).getSequenceAsString(), is("AT"));<a name="line.244"></a>
+<span class="sourceLineNo">245</span>        assertThat("Asserting second k-mer", l.get(2).getSequenceAsString(), is("GT"));<a name="line.245"></a>
+<span class="sourceLineNo">246</span>        assertThat("Asserting second k-mer", l.get(3).getSequenceAsString(), is("TT"));<a name="line.246"></a>
+<span class="sourceLineNo">247</span>    }<a name="line.247"></a>
+<span class="sourceLineNo">248</span><a name="line.248"></a>
+<span class="sourceLineNo">249</span>    @Test<a name="line.249"></a>
+<span class="sourceLineNo">250</span>    public void sequenceEquality() {<a name="line.250"></a>
+<span class="sourceLineNo">251</span>        DNASequence d = getSeq("ATGC");<a name="line.251"></a>
+<span class="sourceLineNo">252</span>        assertTrue("Asserting sequences are identical", SequenceMixin.sequenceEquality(d, d));<a name="line.252"></a>
+<span class="sourceLineNo">253</span>        Assert.assertFalse("Sequence identical but case different", SequenceMixin.sequenceEquality(d, getSeq("ATGc")));<a name="line.253"></a>
+<span class="sourceLineNo">254</span>        assertTrue("Asserting sequences are identical ignoring case", SequenceMixin.sequenceEqualityIgnoreCase(d, d));<a name="line.254"></a>
+<span class="sourceLineNo">255</span>        assertTrue("Asserting sequences are identical ignoring case &amp; case different", SequenceMixin.sequenceEqualityIgnoreCase(d, getSeq("aTgC")));<a name="line.255"></a>
+<span class="sourceLineNo">256</span>        Assert.assertFalse("Sequence lengths differ", SequenceMixin.sequenceEquality(d, getSeq("ATG")));<a name="line.256"></a>
+<span class="sourceLineNo">257</span><a name="line.257"></a>
+<span class="sourceLineNo">258</span>        DNASequence bsr = new DNASequence(new TwoBitSequenceReader&lt;NucleotideCompound&gt;("ATGC", DNACompoundSet.getDNACompoundSet()));<a name="line.258"></a>
+<span class="sourceLineNo">259</span>        DNASequence bsrCI = new DNASequence(new TwoBitSequenceReader&lt;NucleotideCompound&gt;("ATGc", DNACompoundSet.getDNACompoundSet()));<a name="line.259"></a>
+<span class="sourceLineNo">260</span><a name="line.260"></a>
+<span class="sourceLineNo">261</span>        assertTrue("Asserting sequences are identical; backing stores differ", SequenceMixin.sequenceEquality(d, bsr));<a name="line.261"></a>
+<span class="sourceLineNo">262</span>        assertTrue("Asserting sequences are identical ignoring case; backing stores differ", SequenceMixin.sequenceEqualityIgnoreCase(d, bsrCI));<a name="line.262"></a>
+<span class="sourceLineNo">263</span>    }   <a name="line.263"></a>
+<span class="sourceLineNo">264</span><a name="line.264"></a>
+<span class="sourceLineNo">265</span>//  @Test<a name="line.265"></a>
+<span class="sourceLineNo">266</span>//  public void randomTwoBit() throws Exception {<a name="line.266"></a>
+<span class="sourceLineNo">267</span>//    int[] ar = new int[1000000];<a name="line.267"></a>
+<span class="sourceLineNo">268</span>//    Random r = new Random();<a name="line.268"></a>
+<span class="sourceLineNo">269</span>//    for(int i = 0; i &lt; ar.length; i++) {<a name="line.269"></a>
+<span class="sourceLineNo">270</span>//      ar[i] = r.nextInt();<a name="line.270"></a>
+<span class="sourceLineNo">271</span>//    }<a name="line.271"></a>
+<span class="sourceLineNo">272</span>//<a name="line.272"></a>
+<span class="sourceLineNo">273</span>//    System.out.println(Runtime.getRuntime().freeMemory());<a name="line.273"></a>
+<span class="sourceLineNo">274</span>//    System.out.println(Runtime.getRuntime().totalMemory());<a name="line.274"></a>
+<span class="sourceLineNo">275</span>//    TwoBitArrayWorker&lt;NucleotideCompound&gt; worker =<a name="line.275"></a>
+<span class="sourceLineNo">276</span>//      new TwoBitArrayWorker&lt;NucleotideCompound&gt;(getSeq().getCompoundSet(), ar);<a name="line.276"></a>
+<span class="sourceLineNo">277</span>//    SequenceProxyLoader&lt;NucleotideCompound&gt; sbs =<a name="line.277"></a>
+<span class="sourceLineNo">278</span>//      new BitSequenceReader&lt;NucleotideCompound&gt;(worker, new AccessionID("barf"));<a name="line.278"></a>
+<span class="sourceLineNo">279</span>//<a name="line.279"></a>
+<span class="sourceLineNo">280</span>//    System.out.println(sbs.getLength());<a name="line.280"></a>
+<span class="sourceLineNo">281</span>//<a name="line.281"></a>
+<span class="sourceLineNo">282</span>//    System.out.println(Runtime.getRuntime().freeMemory());<a name="line.282"></a>
+<span class="sourceLineNo">283</span>//    System.out.println(Runtime.getRuntime().totalMemory());<a name="line.283"></a>
+<span class="sourceLineNo">284</span>//<a name="line.284"></a>
+<span class="sourceLineNo">285</span>//    List&lt;NucleotideCompound&gt; c = sbs.getAsList();<a name="line.285"></a>
+<span class="sourceLineNo">286</span>//<a name="line.286"></a>
+<span class="sourceLineNo">287</span>//    System.out.println(Runtime.getRuntime().freeMemory());<a name="line.287"></a>
+<span class="sourceLineNo">288</span>//    System.out.println(Runtime.getRuntime().totalMemory());<a name="line.288"></a>
+<span class="sourceLineNo">289</span>//<a name="line.289"></a>
+<span class="sourceLineNo">290</span>////    OutputStream os = new BufferedOutputStream(new FileOutputStream(new File("/tmp/random.fasta")));<a name="line.290"></a>
+<span class="sourceLineNo">291</span>////<a name="line.291"></a>
+<span class="sourceLineNo">292</span>////    List&lt;DNASequence&gt; seqs = Arrays.asList(new DNASequence(sbs, sbs.getCompoundSet()));<a name="line.292"></a>
+<span class="sourceLineNo">293</span>////    seqs.get(0).setAccession(sbs.getAccession());<a name="line.293"></a>
+<span class="sourceLineNo">294</span>////    FastaHeaderFormatInterface&lt;DNASequence, NucleotideCompound&gt; headerFormat =<a name="line.294"></a>
+<span class="sourceLineNo">295</span>////      new GenericFastaHeaderFormat&lt;DNASequence, NucleotideCompound&gt;();<a name="line.295"></a>
+<span class="sourceLineNo">296</span>////<a name="line.296"></a>
+<span class="sourceLineNo">297</span>////    FastaWriter&lt;DNASequence, NucleotideCompound&gt; writer =<a name="line.297"></a>
+<span class="sourceLineNo">298</span>////      new FastaWriter&lt;DNASequence, NucleotideCompound&gt;(os, seqs, headerFormat);<a name="line.298"></a>
+<span class="sourceLineNo">299</span>////<a name="line.299"></a>
+<span class="sourceLineNo">300</span>////    writer.process();<a name="line.300"></a>
+<span class="sourceLineNo">301</span>////<a name="line.301"></a>
+<span class="sourceLineNo">302</span>////    IOUtils.close(os);<a name="line.302"></a>
+<span class="sourceLineNo">303</span>//  }<a name="line.303"></a>
+<span class="sourceLineNo">304</span>    private DNASequence getSeq() {<a name="line.304"></a>
+<span class="sourceLineNo">305</span>        return getSeq(null);<a name="line.305"></a>
+<span class="sourceLineNo">306</span>    }<a name="line.306"></a>
+<span class="sourceLineNo">307</span><a name="line.307"></a>
+<span class="sourceLineNo">308</span>    private DNASequence getSeq(final String seq) {<a name="line.308"></a>
+<span class="sourceLineNo">309</span>        String target = (seq == null) ? "ATGC" : seq;<a name="line.309"></a>
+<span class="sourceLineNo">310</span>        return new DNASequence(target);<a name="line.310"></a>
+<span class="sourceLineNo">311</span>    }<a name="line.311"></a>
+<span class="sourceLineNo">312</span><a name="line.312"></a>
+<span class="sourceLineNo">313</span>    private void assertBaseEquivalence(<a name="line.313"></a>
+<span class="sourceLineNo">314</span>            CompoundSet&lt;NucleotideCompound&gt; compoundSet, String one, String two) {<a name="line.314"></a>
+<span class="sourceLineNo">315</span>        boolean equal = compoundSet.compoundsEquivalent(<a name="line.315"></a>
+<span class="sourceLineNo">316</span>                compoundSet.getCompoundForString(one),<a name="line.316"></a>
+<span class="sourceLineNo">317</span>                compoundSet.getCompoundForString(two));<a name="line.317"></a>
+<span class="sourceLineNo">318</span>        assertTrue(one + " &amp; " + two + " should be equivalent bases", equal);<a name="line.318"></a>
+<span class="sourceLineNo">319</span>    }<a name="line.319"></a>
+<span class="sourceLineNo">320</span>}<a name="line.320"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+demo
+org.biojava3.alignment
+org.biojava3.alignment.aaindex
+org.biojava3.alignment.io
+org.biojava3.alignment.routines
+org.biojava3.alignment.template

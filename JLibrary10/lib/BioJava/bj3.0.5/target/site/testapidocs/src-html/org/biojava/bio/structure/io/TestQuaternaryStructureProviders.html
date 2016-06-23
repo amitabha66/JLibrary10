@@ -1,0 +1,244 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package org.biojava.bio.structure.io;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import static org.junit.Assert.*;<a name="line.3"></a>
+<span class="sourceLineNo">004</span><a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.util.List;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.util.Map;<a name="line.6"></a>
+<span class="sourceLineNo">007</span><a name="line.7"></a>
+<span class="sourceLineNo">008</span>import org.biojava.bio.structure.Atom;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import org.biojava.bio.structure.PDBHeader;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import org.biojava.bio.structure.Structure;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import org.biojava.bio.structure.StructureTools;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import org.biojava.bio.structure.align.util.AtomCache;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import org.biojava.bio.structure.quaternary.ModelTransformationMatrix;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import org.biojava.bio.structure.quaternary.io.BioUnitDataProviderFactory;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import org.biojava.bio.structure.quaternary.io.MmCifBiolAssemblyProvider;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import org.biojava.bio.structure.quaternary.io.PDBBioUnitDataProvider;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import org.biojava3.structure.StructureIO;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import org.junit.Test;<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>public class TestQuaternaryStructureProviders {<a name="line.20"></a>
+<span class="sourceLineNo">021</span><a name="line.21"></a>
+<span class="sourceLineNo">022</span>        @Test<a name="line.22"></a>
+<span class="sourceLineNo">023</span>        public void test1STP() {<a name="line.23"></a>
+<span class="sourceLineNo">024</span>                <a name="line.24"></a>
+<span class="sourceLineNo">025</span>                <a name="line.25"></a>
+<span class="sourceLineNo">026</span>                testID("1stp",1);<a name="line.26"></a>
+<span class="sourceLineNo">027</span>        }<a name="line.27"></a>
+<span class="sourceLineNo">028</span>        @Test<a name="line.28"></a>
+<span class="sourceLineNo">029</span>        public void test3FAD(){<a name="line.29"></a>
+<span class="sourceLineNo">030</span>                testID("3fad",1);<a name="line.30"></a>
+<span class="sourceLineNo">031</span>                testID("3fad",2);<a name="line.31"></a>
+<span class="sourceLineNo">032</span>        }<a name="line.32"></a>
+<span class="sourceLineNo">033</span>        <a name="line.33"></a>
+<span class="sourceLineNo">034</span>        @Test<a name="line.34"></a>
+<span class="sourceLineNo">035</span>        public void test5LDH(){<a name="line.35"></a>
+<span class="sourceLineNo">036</span>                testID("5LDH",1);<a name="line.36"></a>
+<span class="sourceLineNo">037</span><a name="line.37"></a>
+<span class="sourceLineNo">038</span>        }<a name="line.38"></a>
+<span class="sourceLineNo">039</span>        <a name="line.39"></a>
+<span class="sourceLineNo">040</span>        @Test<a name="line.40"></a>
+<span class="sourceLineNo">041</span>        public void test2TBV(){<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                testID("2TBV",1);<a name="line.42"></a>
+<span class="sourceLineNo">043</span><a name="line.43"></a>
+<span class="sourceLineNo">044</span>        }<a name="line.44"></a>
+<span class="sourceLineNo">045</span>//      @Test<a name="line.45"></a>
+<span class="sourceLineNo">046</span>//      public void test1EI7(){<a name="line.46"></a>
+<span class="sourceLineNo">047</span>//              testID("1ei7",1);<a name="line.47"></a>
+<span class="sourceLineNo">048</span>//<a name="line.48"></a>
+<span class="sourceLineNo">049</span>//      }<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        <a name="line.50"></a>
+<span class="sourceLineNo">051</span>                <a name="line.51"></a>
+<span class="sourceLineNo">052</span>        private void testID(String pdbId, int bioMolecule){<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                <a name="line.53"></a>
+<span class="sourceLineNo">054</span>                <a name="line.54"></a>
+<span class="sourceLineNo">055</span>                try {<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                        // get bio assembly from PDB file<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                        PDBBioUnitDataProvider pdbProvider = new PDBBioUnitDataProvider();<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                        BioUnitDataProviderFactory.setBioUnitDataProvider(pdbProvider.getClass().getCanonicalName());<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                        Structure pdbS = StructureIO.getBiologicalAssembly(pdbId, bioMolecule);<a name="line.59"></a>
+<span class="sourceLineNo">060</span><a name="line.60"></a>
+<span class="sourceLineNo">061</span>                        // get bio assembly from mmcif file<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                        MmCifBiolAssemblyProvider mmcifProvider = new MmCifBiolAssemblyProvider();<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                        BioUnitDataProviderFactory.setBioUnitDataProvider(mmcifProvider.getClass().getCanonicalName());                 <a name="line.63"></a>
+<span class="sourceLineNo">064</span>                        Structure mmcifS = StructureIO.getBiologicalAssembly(pdbId, bioMolecule);<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                <a name="line.65"></a>
+<span class="sourceLineNo">066</span>                        BioUnitDataProviderFactory.setBioUnitDataProvider(BioUnitDataProviderFactory.DEFAULT_PROVIDER_CLASSNAME);<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                        <a name="line.67"></a>
+<span class="sourceLineNo">068</span>                        <a name="line.68"></a>
+<span class="sourceLineNo">069</span>                        <a name="line.69"></a>
+<span class="sourceLineNo">070</span>                        PDBHeader pHeader = pdbS.getPDBHeader();<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                        PDBHeader mHeader = mmcifS.getPDBHeader();<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                        //PDBHeader fHeader = flatFileS.getPDBHeader();<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                        <a name="line.73"></a>
+<span class="sourceLineNo">074</span>                        assertTrue("not correct nr of bioassemblies " + pHeader.getNrBioAssemblies() + " " , pHeader.getNrBioAssemblies() &gt;= bioMolecule);<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                        assertTrue("not correct nr of bioassemblies " + mHeader.getNrBioAssemblies() + " " , mHeader.getNrBioAssemblies() &gt;= bioMolecule);<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                        //assertTrue("not correct nr of bioassemblies " + fHeader.getNrBioAssemblies() + " " , fHeader.getNrBioAssemblies() &gt;= bioMolecule);<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                        <a name="line.77"></a>
+<span class="sourceLineNo">078</span>                        // mmcif files contain sometimes partial virus assemblies, so they can contain more info than pdb<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                        assertTrue(pHeader.getNrBioAssemblies() &lt;= mHeader.getNrBioAssemblies());<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                        <a name="line.80"></a>
+<span class="sourceLineNo">081</span>                        <a name="line.81"></a>
+<span class="sourceLineNo">082</span>                        Map&lt;Integer, List&lt;ModelTransformationMatrix&gt;&gt; pMap = pHeader.getBioUnitTranformationMap();<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                        Map&lt;Integer, List&lt;ModelTransformationMatrix&gt;&gt; mMap = mHeader.getBioUnitTranformationMap();<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                        <a name="line.84"></a>
+<span class="sourceLineNo">085</span>                        //System.out.println("PDB: " + pMap);<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                        <a name="line.86"></a>
+<span class="sourceLineNo">087</span>                        //System.out.println("Mmcif: " + mMap);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                        <a name="line.88"></a>
+<span class="sourceLineNo">089</span>                        assertTrue(pMap.keySet().size()&lt;= mMap.keySet().size());<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                        <a name="line.90"></a>
+<span class="sourceLineNo">091</span>                        for ( Integer k : pMap.keySet()) {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                                assertTrue(mMap.containsKey(k));<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                                <a name="line.93"></a>
+<span class="sourceLineNo">094</span>                                List&lt;ModelTransformationMatrix&gt; pL = pMap.get(k);<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                                <a name="line.95"></a>
+<span class="sourceLineNo">096</span>                                // mmcif list can be longer due to the use of internal chain IDs<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                                List&lt;ModelTransformationMatrix&gt; mL = mMap.get(k);<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                                <a name="line.98"></a>
+<span class="sourceLineNo">099</span>                                //assertEquals(pL.size(), mL.size());<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                                <a name="line.100"></a>
+<span class="sourceLineNo">101</span>                                <a name="line.101"></a>
+<span class="sourceLineNo">102</span>                                for (ModelTransformationMatrix m1 : pL){<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                                        <a name="line.103"></a>
+<span class="sourceLineNo">104</span>                                        boolean found = false;<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                                        for ( ModelTransformationMatrix m2 : mL){<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                                                <a name="line.106"></a>
+<span class="sourceLineNo">107</span>                                                if  (! m1.getNdbChainId().equals(m2.getNdbChainId()))<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                                                                continue;<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                                                if ( ! m1.getMatrix().toString().equals(m2.getMatrix().toString()))<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                                                                continue;<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                                                if ( ! equalVectors(m1.getVector(),m2.getVector()))<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                                                        continue;<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                                                <a name="line.113"></a>
+<span class="sourceLineNo">114</span>                                                found = true;<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                                                <a name="line.115"></a>
+<span class="sourceLineNo">116</span>                                        }<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                                        <a name="line.117"></a>
+<span class="sourceLineNo">118</span>                                        if ( ! found ){<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                                                System.err.println("did not find matching matrix " + m1);<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                                                System.err.println(mL);<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                                        }<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                                        assertTrue(found);<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                                        <a name="line.123"></a>
+<span class="sourceLineNo">124</span>                                }<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                        }<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                        <a name="line.126"></a>
+<span class="sourceLineNo">127</span>                        <a name="line.127"></a>
+<span class="sourceLineNo">128</span>                        assertEquals("Not the same number of chains!" , pdbS.size(),mmcifS.size());<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                        <a name="line.129"></a>
+<span class="sourceLineNo">130</span>                        Atom[] pdbA = StructureTools.getAllAtomArray(pdbS);<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                        <a name="line.131"></a>
+<span class="sourceLineNo">132</span>                        Atom[] mmcifA = StructureTools.getAllAtomArray(mmcifS);<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                        <a name="line.133"></a>
+<span class="sourceLineNo">134</span>                        assertEquals(pdbA.length, mmcifA.length);<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                        <a name="line.135"></a>
+<span class="sourceLineNo">136</span>                        assertEquals(pdbA[0].toPDB(), mmcifA[0].toPDB());<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                        <a name="line.137"></a>
+<span class="sourceLineNo">138</span>                        <a name="line.138"></a>
+<span class="sourceLineNo">139</span>                        // compare with flat file version:<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                        AtomCache cache = new AtomCache();<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                        FileParsingParameters params = cache.getFileParsingParams();<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                        params.setAlignSeqRes(true);<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                        params.setParseCAOnly(false);<a name="line.143"></a>
+<span class="sourceLineNo">144</span><a name="line.144"></a>
+<span class="sourceLineNo">145</span>                        Structure flatFileS = cache.getBiologicalAssembly(pdbId, bioMolecule, false);<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                        <a name="line.146"></a>
+<span class="sourceLineNo">147</span>                        Atom[] fileA = StructureTools.getAllAtomArray(flatFileS);<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                        <a name="line.148"></a>
+<span class="sourceLineNo">149</span>                        assertEquals(pdbA.length, fileA.length);<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                        <a name="line.150"></a>
+<span class="sourceLineNo">151</span>                        assertEquals(pdbS.nrModels(),flatFileS.nrModels());<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                                                <a name="line.152"></a>
+<span class="sourceLineNo">153</span>                } catch (Exception e){<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                        e.printStackTrace();<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                        fail(e.getMessage());<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                }<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                <a name="line.157"></a>
+<span class="sourceLineNo">158</span>                <a name="line.158"></a>
+<span class="sourceLineNo">159</span>        <a name="line.159"></a>
+<span class="sourceLineNo">160</span>                <a name="line.160"></a>
+<span class="sourceLineNo">161</span>                <a name="line.161"></a>
+<span class="sourceLineNo">162</span>        }<a name="line.162"></a>
+<span class="sourceLineNo">163</span>        private boolean equalVectors(double[] vector, double[] vector2) {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                <a name="line.164"></a>
+<span class="sourceLineNo">165</span>                String s1 = String.format("%.5f %.5f %.5f", vector[0], vector[1], vector[2]);<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                String s2 = String.format("%.5f %.5f %.5f", vector2[0], vector2[1], vector2[2]);<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                //System.out.println(s1 + " " + s2);<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                return s1.equals(s2);<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                <a name="line.169"></a>
+<span class="sourceLineNo">170</span>        }<a name="line.170"></a>
+<span class="sourceLineNo">171</span><a name="line.171"></a>
+<span class="sourceLineNo">172</span>}<a name="line.172"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

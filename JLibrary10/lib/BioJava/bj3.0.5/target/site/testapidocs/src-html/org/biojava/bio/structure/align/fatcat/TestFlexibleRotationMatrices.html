@@ -1,0 +1,373 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> *                    BioJava development code<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * This code may be freely distributed and modified under the<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * terms of the GNU Lesser General Public Licence.  This should<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * be distributed with the code.  If you do not have a copy,<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * see:<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.gnu.org/copyleft/lesser.html<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Copyright for this code is held jointly by the individual<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * authors.  These should be listed in @author doc comments.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> *<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * For more information on the BioJava project and its aims,<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * or to join the biojava-l mailing list, visit the home page<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * at:<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *<a name="line.17"></a>
+<span class="sourceLineNo">018</span> *      http://www.biojava.org/<a name="line.18"></a>
+<span class="sourceLineNo">019</span> *<a name="line.19"></a>
+<span class="sourceLineNo">020</span> * Created on Dec 1, 2009<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * Author: Andreas Prlic <a name="line.21"></a>
+<span class="sourceLineNo">022</span> *<a name="line.22"></a>
+<span class="sourceLineNo">023</span> */<a name="line.23"></a>
+<span class="sourceLineNo">024</span><a name="line.24"></a>
+<span class="sourceLineNo">025</span>package org.biojava.bio.structure.align.fatcat;<a name="line.25"></a>
+<span class="sourceLineNo">026</span><a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.io.IOException;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.util.ArrayList;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.util.List;<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>import junit.framework.TestCase;<a name="line.31"></a>
+<span class="sourceLineNo">032</span><a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.biojava.bio.structure.Atom;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.biojava.bio.structure.Calc;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.biojava.bio.structure.SVDSuperimposer;<a name="line.35"></a>
+<span class="sourceLineNo">036</span><a name="line.36"></a>
+<span class="sourceLineNo">037</span>import org.biojava.bio.structure.StructureException;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import org.biojava.bio.structure.StructureTools;<a name="line.38"></a>
+<span class="sourceLineNo">039</span><a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.biojava.bio.structure.align.StructureAlignment;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.biojava.bio.structure.align.fatcat.calc.FatCatParameters;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.biojava.bio.structure.align.model.AFPChain;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import org.biojava.bio.structure.align.util.AtomCache;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import org.biojava.bio.structure.align.xml.AFPChainXMLConverter;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import org.biojava.bio.structure.align.xml.AFPChainXMLParser;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import org.biojava.bio.structure.jama.Matrix;<a name="line.46"></a>
+<span class="sourceLineNo">047</span><a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span><a name="line.49"></a>
+<span class="sourceLineNo">050</span>public class TestFlexibleRotationMatrices extends TestCase{<a name="line.50"></a>
+<span class="sourceLineNo">051</span><a name="line.51"></a>
+<span class="sourceLineNo">052</span>  <a name="line.52"></a>
+<span class="sourceLineNo">053</span><a name="line.53"></a>
+<span class="sourceLineNo">054</span><a name="line.54"></a>
+<span class="sourceLineNo">055</span>   public void testFlexibleRotationMatrices(){<a name="line.55"></a>
+<span class="sourceLineNo">056</span><a name="line.56"></a>
+<span class="sourceLineNo">057</span>      String name1 = "1a21.A";<a name="line.57"></a>
+<span class="sourceLineNo">058</span>      String name2 = "1hwg.C";<a name="line.58"></a>
+<span class="sourceLineNo">059</span><a name="line.59"></a>
+<span class="sourceLineNo">060</span>      compare(name1,name2, false);<a name="line.60"></a>
+<span class="sourceLineNo">061</span>      compare(name1,name2, true);<a name="line.61"></a>
+<span class="sourceLineNo">062</span><a name="line.62"></a>
+<span class="sourceLineNo">063</span>      String name3 = "5pti.A";<a name="line.63"></a>
+<span class="sourceLineNo">064</span>      String name4 = "1znf.A";<a name="line.64"></a>
+<span class="sourceLineNo">065</span>      compare(name3,name4, false);<a name="line.65"></a>
+<span class="sourceLineNo">066</span>      compare(name3,name4, true);<a name="line.66"></a>
+<span class="sourceLineNo">067</span>   }<a name="line.67"></a>
+<span class="sourceLineNo">068</span><a name="line.68"></a>
+<span class="sourceLineNo">069</span>   private void compare(String name1, String name2, boolean doRigid){<a name="line.69"></a>
+<span class="sourceLineNo">070</span><a name="line.70"></a>
+<span class="sourceLineNo">071</span>           AtomCache cache = new AtomCache();<a name="line.71"></a>
+<span class="sourceLineNo">072</span><a name="line.72"></a>
+<span class="sourceLineNo">073</span>      try {<a name="line.73"></a>
+<span class="sourceLineNo">074</span>         Atom[] ca1orig = cache.getAtoms(name1);<a name="line.74"></a>
+<span class="sourceLineNo">075</span>         Atom[] ca2orig = cache.getAtoms(name2);<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>         Atom[] ca1 = StructureTools.cloneCAArray(ca1orig);<a name="line.77"></a>
+<span class="sourceLineNo">078</span>         Atom[] ca2 = StructureTools.cloneCAArray(ca2orig);<a name="line.78"></a>
+<span class="sourceLineNo">079</span><a name="line.79"></a>
+<span class="sourceLineNo">080</span>         Atom[] ca3 = StructureTools.cloneCAArray(ca2);<a name="line.80"></a>
+<span class="sourceLineNo">081</span><a name="line.81"></a>
+<span class="sourceLineNo">082</span>         AFPChain afpChain = getAlignment(name1, name2, ca1, ca2, doRigid);<a name="line.82"></a>
+<span class="sourceLineNo">083</span>         afpChain.setCalculationTime(-1);<a name="line.83"></a>
+<span class="sourceLineNo">084</span>         String xml = AFPChainXMLConverter.toXML(afpChain,ca1,ca2);<a name="line.84"></a>
+<span class="sourceLineNo">085</span>         //System.out.println(xml);<a name="line.85"></a>
+<span class="sourceLineNo">086</span>         AFPChain newChain = AFPChainXMLParser.fromXML (xml, ca1, ca3);<a name="line.86"></a>
+<span class="sourceLineNo">087</span>         <a name="line.87"></a>
+<span class="sourceLineNo">088</span>         Matrix[] maxs1 = afpChain.getBlockRotationMatrix();<a name="line.88"></a>
+<span class="sourceLineNo">089</span>         //Atom[] shifts1 = afpChain.getBlockShiftVector();<a name="line.89"></a>
+<span class="sourceLineNo">090</span>         double[] blockRmsd = afpChain.getBlockRmsd();<a name="line.90"></a>
+<span class="sourceLineNo">091</span><a name="line.91"></a>
+<span class="sourceLineNo">092</span>         assertTrue( afpChain.getBlockNum() == newChain.getBlockNum());<a name="line.92"></a>
+<span class="sourceLineNo">093</span><a name="line.93"></a>
+<span class="sourceLineNo">094</span>         // make sure the XML conversion worked OK.<a name="line.94"></a>
+<span class="sourceLineNo">095</span>         for ( int i = 0 ; i &lt; newChain.getBlockNum();i++) {<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                <a name="line.96"></a>
+<span class="sourceLineNo">097</span>            assertTrue(compareMatrices(maxs1[i],newChain.getBlockRotationMatrix()[i]));<a name="line.97"></a>
+<span class="sourceLineNo">098</span>            //assertTrue(compareVectors(shifts1[i],newChain.getBlockShiftVector()[i]));<a name="line.98"></a>
+<span class="sourceLineNo">099</span>            assertTrue(compareRmsd(blockRmsd[i], newChain.getBlockRmsd()[i]) );<a name="line.99"></a>
+<span class="sourceLineNo">100</span>         }<a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>         assertTrue(afpChain.getOptLength() == newChain.getOptLength());<a name="line.102"></a>
+<span class="sourceLineNo">103</span><a name="line.103"></a>
+<span class="sourceLineNo">104</span>         // get the aligned blocks and check RMSD<a name="line.104"></a>
+<span class="sourceLineNo">105</span>         int[] blockSize =afpChain.getBlockSize();<a name="line.105"></a>
+<span class="sourceLineNo">106</span><a name="line.106"></a>
+<span class="sourceLineNo">107</span>         int[][][] blocks1 = afpChain.getOptAln();<a name="line.107"></a>
+<span class="sourceLineNo">108</span>         int[][][] blocks2 = newChain.getOptAln();<a name="line.108"></a>
+<span class="sourceLineNo">109</span><a name="line.109"></a>
+<span class="sourceLineNo">110</span>         for ( int x = 0 ; x &lt; blocks1.length &amp;&amp; x &lt; afpChain.getBlockNum() ; x++){<a name="line.110"></a>
+<span class="sourceLineNo">111</span>            for ( int y = 0 ; y &lt; blocks1[x].length ; y++){<a name="line.111"></a>
+<span class="sourceLineNo">112</span>               for ( int z = 0 ; z &lt; blocks1[x][y].length &amp;&amp; z &lt; blockSize[x] ; z++){<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                  //System.out.println(x + " " + y + " " + z);<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                  assertEquals("The values in the optAln arrays don't match! " + <a name="line.114"></a>
+<span class="sourceLineNo">115</span>                        x + " " + z + " " + blocks1[x][y][z]+ " " + <a name="line.115"></a>
+<span class="sourceLineNo">116</span>                        blocks2[x][y][z],blocks1[x][y][z], blocks2[x][y][z]);<a name="line.116"></a>
+<span class="sourceLineNo">117</span>               }<a name="line.117"></a>
+<span class="sourceLineNo">118</span>            }<a name="line.118"></a>
+<span class="sourceLineNo">119</span><a name="line.119"></a>
+<span class="sourceLineNo">120</span><a name="line.120"></a>
+<span class="sourceLineNo">121</span>            Atom[] ca1new = StructureTools.cloneCAArray(ca1orig);<a name="line.121"></a>
+<span class="sourceLineNo">122</span>            Atom[] ca2new = StructureTools.cloneCAArray(ca2orig);<a name="line.122"></a>
+<span class="sourceLineNo">123</span><a name="line.123"></a>
+<span class="sourceLineNo">124</span>            compareBlock(x,afpChain, newChain,ca1new,ca2new );<a name="line.124"></a>
+<span class="sourceLineNo">125</span><a name="line.125"></a>
+<span class="sourceLineNo">126</span>         }<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>      } catch (IOException e){<a name="line.128"></a>
+<span class="sourceLineNo">129</span>         fail(e.getMessage());<a name="line.129"></a>
+<span class="sourceLineNo">130</span>      } catch (StructureException e){<a name="line.130"></a>
+<span class="sourceLineNo">131</span>         fail(e.getMessage());<a name="line.131"></a>
+<span class="sourceLineNo">132</span>      }<a name="line.132"></a>
+<span class="sourceLineNo">133</span><a name="line.133"></a>
+<span class="sourceLineNo">134</span><a name="line.134"></a>
+<span class="sourceLineNo">135</span>   }<a name="line.135"></a>
+<span class="sourceLineNo">136</span><a name="line.136"></a>
+<span class="sourceLineNo">137</span>   private boolean compareRmsd(double rmsdOrig, double rmsdNew) {<a name="line.137"></a>
+<span class="sourceLineNo">138</span>      //System.out.println("orig: " + rmsdOrig + " " + rmsdNew);<a name="line.138"></a>
+<span class="sourceLineNo">139</span>      String rmsdString1 = String.format("%5.2f",rmsdOrig);<a name="line.139"></a>
+<span class="sourceLineNo">140</span>      String rmsdString2 = String.format("%5.2f",rmsdNew);<a name="line.140"></a>
+<span class="sourceLineNo">141</span><a name="line.141"></a>
+<span class="sourceLineNo">142</span>      return rmsdString1.equals(rmsdString2);<a name="line.142"></a>
+<span class="sourceLineNo">143</span><a name="line.143"></a>
+<span class="sourceLineNo">144</span><a name="line.144"></a>
+<span class="sourceLineNo">145</span>   }<a name="line.145"></a>
+<span class="sourceLineNo">146</span><a name="line.146"></a>
+<span class="sourceLineNo">147</span>   private void compareBlock(int blockNr, AFPChain afpChain, AFPChain newChain,<a name="line.147"></a>
+<span class="sourceLineNo">148</span>         Atom[] ca1, Atom[] ca2) throws StructureException {<a name="line.148"></a>
+<span class="sourceLineNo">149</span>      <a name="line.149"></a>
+<span class="sourceLineNo">150</span><a name="line.150"></a>
+<span class="sourceLineNo">151</span><a name="line.151"></a>
+<span class="sourceLineNo">152</span>      Atom[] ca1Copy = StructureTools.cloneCAArray(ca1);<a name="line.152"></a>
+<span class="sourceLineNo">153</span>      Atom[] ca2Copy = StructureTools.cloneCAArray(ca2);<a name="line.153"></a>
+<span class="sourceLineNo">154</span>      Atom[] ca2Copy2 = StructureTools.cloneCAArray(ca2);<a name="line.154"></a>
+<span class="sourceLineNo">155</span><a name="line.155"></a>
+<span class="sourceLineNo">156</span>     // int[][][] blocks1 = afpChain.getOptAln();<a name="line.156"></a>
+<span class="sourceLineNo">157</span>      int[][][] blocks2 = newChain.getOptAln();<a name="line.157"></a>
+<span class="sourceLineNo">158</span><a name="line.158"></a>
+<span class="sourceLineNo">159</span>     // Matrix[] maxs1 = afpChain.getBlockRotationMatrix();<a name="line.159"></a>
+<span class="sourceLineNo">160</span>     // Atom[] shifts1 = afpChain.getBlockShiftVector();<a name="line.160"></a>
+<span class="sourceLineNo">161</span><a name="line.161"></a>
+<span class="sourceLineNo">162</span>      Matrix[] maxs2 = newChain.getBlockRotationMatrix();<a name="line.162"></a>
+<span class="sourceLineNo">163</span>      Atom[] shifts2 = newChain.getBlockShiftVector();<a name="line.163"></a>
+<span class="sourceLineNo">164</span><a name="line.164"></a>
+<span class="sourceLineNo">165</span>      // get the eqr atoms of block X:<a name="line.165"></a>
+<span class="sourceLineNo">166</span>      int[] optLen =afpChain.getOptLen();<a name="line.166"></a>
+<span class="sourceLineNo">167</span>      List&lt;Atom&gt; eqrPos1 = new ArrayList&lt;Atom&gt;();<a name="line.167"></a>
+<span class="sourceLineNo">168</span>      List&lt;Atom&gt; eqrPos2 = new ArrayList&lt;Atom&gt;();<a name="line.168"></a>
+<span class="sourceLineNo">169</span>      List&lt;Atom&gt; eqrPos2copy = new ArrayList&lt;Atom&gt;();<a name="line.169"></a>
+<span class="sourceLineNo">170</span>      for ( int z = 0 ; z &lt; blocks2[blockNr][0].length &amp;&amp; z &lt; optLen[blockNr] ; z++){<a name="line.170"></a>
+<span class="sourceLineNo">171</span>         int pos1 = blocks2[blockNr][0][z];<a name="line.171"></a>
+<span class="sourceLineNo">172</span>         int pos2 = blocks2[blockNr][1][z];<a name="line.172"></a>
+<span class="sourceLineNo">173</span><a name="line.173"></a>
+<span class="sourceLineNo">174</span>         Atom c1 = ca1Copy[pos1];<a name="line.174"></a>
+<span class="sourceLineNo">175</span>         Atom c2 = ca2Copy[pos2];<a name="line.175"></a>
+<span class="sourceLineNo">176</span>         Atom c3 = ca2Copy2[pos2];<a name="line.176"></a>
+<span class="sourceLineNo">177</span><a name="line.177"></a>
+<span class="sourceLineNo">178</span>         eqrPos1.add(c1);<a name="line.178"></a>
+<span class="sourceLineNo">179</span>         eqrPos2.add(c2);<a name="line.179"></a>
+<span class="sourceLineNo">180</span>         eqrPos2copy.add(c3);<a name="line.180"></a>
+<span class="sourceLineNo">181</span>      }<a name="line.181"></a>
+<span class="sourceLineNo">182</span><a name="line.182"></a>
+<span class="sourceLineNo">183</span>      assertTrue("The nr of Atoms in block " + blockNr + " does not match the expected nr. Expected:" + afpChain.getOptLen()[blockNr] + " but found: " + eqrPos2.size() , eqrPos2.size() == afpChain.getOptLen()[blockNr]);<a name="line.183"></a>
+<span class="sourceLineNo">184</span><a name="line.184"></a>
+<span class="sourceLineNo">185</span><a name="line.185"></a>
+<span class="sourceLineNo">186</span><a name="line.186"></a>
+<span class="sourceLineNo">187</span>      // THIS IS ROTATING the coordinates according to what is in the file.<a name="line.187"></a>
+<span class="sourceLineNo">188</span><a name="line.188"></a>
+<span class="sourceLineNo">189</span>      Atom[] blockSet1 = eqrPos1.toArray(new Atom[eqrPos1.size()]);<a name="line.189"></a>
+<span class="sourceLineNo">190</span>      Atom[] blockSet2 = eqrPos2.toArray(new Atom[eqrPos2.size()]);<a name="line.190"></a>
+<span class="sourceLineNo">191</span>      Atom[] blockSet2copy = eqrPos2copy.toArray(new Atom[eqrPos2copy.size()]);<a name="line.191"></a>
+<span class="sourceLineNo">192</span><a name="line.192"></a>
+<span class="sourceLineNo">193</span><a name="line.193"></a>
+<span class="sourceLineNo">194</span>      //System.out.println(shift );<a name="line.194"></a>
+<span class="sourceLineNo">195</span><a name="line.195"></a>
+<span class="sourceLineNo">196</span>      // rotate group 2...<a name="line.196"></a>
+<span class="sourceLineNo">197</span>      for ( Atom a : blockSet2){<a name="line.197"></a>
+<span class="sourceLineNo">198</span>         for ( int i =0 ; i&lt;= blockNr;i++ ) {<a name="line.198"></a>
+<span class="sourceLineNo">199</span>            Matrix max   = maxs2[  i];<a name="line.199"></a>
+<span class="sourceLineNo">200</span>            Atom   shift = shifts2[i];<a name="line.200"></a>
+<span class="sourceLineNo">201</span>            Calc.rotate(a, max);<a name="line.201"></a>
+<span class="sourceLineNo">202</span>            Calc.shift( a, shift);<a name="line.202"></a>
+<span class="sourceLineNo">203</span>         }<a name="line.203"></a>
+<span class="sourceLineNo">204</span>      }<a name="line.204"></a>
+<span class="sourceLineNo">205</span>      // calc RMSD<a name="line.205"></a>
+<span class="sourceLineNo">206</span><a name="line.206"></a>
+<span class="sourceLineNo">207</span><a name="line.207"></a>
+<span class="sourceLineNo">208</span>      double rmsdFile = SVDSuperimposer.getRMS(blockSet1, blockSet2);           <a name="line.208"></a>
+<span class="sourceLineNo">209</span><a name="line.209"></a>
+<span class="sourceLineNo">210</span>      // this is the value from the file. it never seems to match precisely, probably is calculated from initial block.<a name="line.210"></a>
+<span class="sourceLineNo">211</span>      // we can't reproduce the initial block, since we don;t serialize it.<a name="line.211"></a>
+<span class="sourceLineNo">212</span>      //double rmsdOrig =afpChain.getBlockRmsd()[blockNr];<a name="line.212"></a>
+<span class="sourceLineNo">213</span><a name="line.213"></a>
+<span class="sourceLineNo">214</span><a name="line.214"></a>
+<span class="sourceLineNo">215</span>      // THIS IS CALCULATING THE "correct" rotation matrix, that should be in the file<a name="line.215"></a>
+<span class="sourceLineNo">216</span><a name="line.216"></a>
+<span class="sourceLineNo">217</span>      SVDSuperimposer svd = new SVDSuperimposer(blockSet1, blockSet2copy);<a name="line.217"></a>
+<span class="sourceLineNo">218</span>      //double rmsdForce = SVDSuperimposer.getRMS(atomSet1, atomSet2);<a name="line.218"></a>
+<span class="sourceLineNo">219</span>      Matrix m = svd.getRotation();<a name="line.219"></a>
+<span class="sourceLineNo">220</span>      Atom   s  = svd.getTranslation();<a name="line.220"></a>
+<span class="sourceLineNo">221</span><a name="line.221"></a>
+<span class="sourceLineNo">222</span>      Matrix max   = maxs2[blockNr];<a name="line.222"></a>
+<span class="sourceLineNo">223</span>      Atom   shift = shifts2[blockNr];<a name="line.223"></a>
+<span class="sourceLineNo">224</span>    <a name="line.224"></a>
+<span class="sourceLineNo">225</span>      compareMatrices(max, m);<a name="line.225"></a>
+<span class="sourceLineNo">226</span><a name="line.226"></a>
+<span class="sourceLineNo">227</span>      <a name="line.227"></a>
+<span class="sourceLineNo">228</span>      if ( blockNr == 0) {<a name="line.228"></a>
+<span class="sourceLineNo">229</span>          compareVectors(shift, s);<a name="line.229"></a>
+<span class="sourceLineNo">230</span>      } else {<a name="line.230"></a>
+<span class="sourceLineNo">231</span>          System.err.println("Not testing shift vectors for blocks &gt; 1. There is still a problem...");<a name="line.231"></a>
+<span class="sourceLineNo">232</span>          <a name="line.232"></a>
+<span class="sourceLineNo">233</span>      }<a name="line.233"></a>
+<span class="sourceLineNo">234</span><a name="line.234"></a>
+<span class="sourceLineNo">235</span>      for ( Atom a : ca2Copy2){<a name="line.235"></a>
+<span class="sourceLineNo">236</span>         Calc.rotate(a, m);<a name="line.236"></a>
+<span class="sourceLineNo">237</span>         Calc.shift( a, s);<a name="line.237"></a>
+<span class="sourceLineNo">238</span>      }<a name="line.238"></a>
+<span class="sourceLineNo">239</span>      double rmsd3 = SVDSuperimposer.getRMS(blockSet1,blockSet2copy);<a name="line.239"></a>
+<span class="sourceLineNo">240</span><a name="line.240"></a>
+<span class="sourceLineNo">241</span>      assertTrue("The RMSD values don;t match after rotation / shift for block " + blockNr + "! should be: " + rmsd3 + " but found: " +rmsdFile, compareRmsd(rmsd3, rmsdFile));<a name="line.241"></a>
+<span class="sourceLineNo">242</span><a name="line.242"></a>
+<span class="sourceLineNo">243</span><a name="line.243"></a>
+<span class="sourceLineNo">244</span><a name="line.244"></a>
+<span class="sourceLineNo">245</span>      //this fails: is fatcat is using the rmsd before optimization?<a name="line.245"></a>
+<span class="sourceLineNo">246</span>      //assertTrue("The RMSD values don;t match after rotation / shift for block " + blockNr + "! should be: " + rmsdOrig + " but found: " +rmsdNew, compareRmsd(rmsdOrig, rmsdNew));<a name="line.246"></a>
+<span class="sourceLineNo">247</span>      // get the RMSD between the aligned blocks...<a name="line.247"></a>
+<span class="sourceLineNo">248</span><a name="line.248"></a>
+<span class="sourceLineNo">249</span><a name="line.249"></a>
+<span class="sourceLineNo">250</span>   }<a name="line.250"></a>
+<span class="sourceLineNo">251</span><a name="line.251"></a>
+<span class="sourceLineNo">252</span>   private boolean compareVectors(Atom atom1, Atom atom2) throws StructureException {<a name="line.252"></a>
+<span class="sourceLineNo">253</span><a name="line.253"></a>
+<span class="sourceLineNo">254</span>           //System.out.println(Math.abs(atom1.getX()-  atom2.getX()));<a name="line.254"></a>
+<span class="sourceLineNo">255</span>           assertTrue("The X coordinates are too far apart!", Math.abs(atom1.getX()-  atom2.getX()) &lt; 0.01);<a name="line.255"></a>
+<span class="sourceLineNo">256</span>           assertTrue("The Y coordinates are too far apart!", Math.abs(atom1.getY()-  atom2.getY()) &lt; 0.01);<a name="line.256"></a>
+<span class="sourceLineNo">257</span>           assertTrue("The Z coordinates are too far apart!", Math.abs(atom1.getZ()-  atom2.getZ()) &lt; 0.01);<a name="line.257"></a>
+<span class="sourceLineNo">258</span>      //return (atom1.getX() == atom2.getX() &amp;&amp; atom1.getY() == atom2.getY() &amp;&amp; atom1.getZ() == atom2.getZ());<a name="line.258"></a>
+<span class="sourceLineNo">259</span>           return true;<a name="line.259"></a>
+<span class="sourceLineNo">260</span><a name="line.260"></a>
+<span class="sourceLineNo">261</span><a name="line.261"></a>
+<span class="sourceLineNo">262</span>   }<a name="line.262"></a>
+<span class="sourceLineNo">263</span><a name="line.263"></a>
+<span class="sourceLineNo">264</span>   private boolean compareMatrices(Matrix matrix1, Matrix matrix2) {<a name="line.264"></a>
+<span class="sourceLineNo">265</span><a name="line.265"></a>
+<span class="sourceLineNo">266</span>      String m1 = matrix1.toString();<a name="line.266"></a>
+<span class="sourceLineNo">267</span>      String m2 = matrix2.toString();<a name="line.267"></a>
+<span class="sourceLineNo">268</span><a name="line.268"></a>
+<span class="sourceLineNo">269</span>      return (m1.equals(m2));<a name="line.269"></a>
+<span class="sourceLineNo">270</span><a name="line.270"></a>
+<span class="sourceLineNo">271</span><a name="line.271"></a>
+<span class="sourceLineNo">272</span>   }<a name="line.272"></a>
+<span class="sourceLineNo">273</span><a name="line.273"></a>
+<span class="sourceLineNo">274</span>   private AFPChain getAlignment (String name1, String name2, Atom[] ca1, Atom[] ca2 , boolean doRigid) throws StructureException,IOException{<a name="line.274"></a>
+<span class="sourceLineNo">275</span>      FatCatParameters params = new FatCatParameters();<a name="line.275"></a>
+<span class="sourceLineNo">276</span><a name="line.276"></a>
+<span class="sourceLineNo">277</span>      StructureAlignment fatCat ;<a name="line.277"></a>
+<span class="sourceLineNo">278</span><a name="line.278"></a>
+<span class="sourceLineNo">279</span>      if ( doRigid)<a name="line.279"></a>
+<span class="sourceLineNo">280</span>         fatCat = new FatCatRigid();<a name="line.280"></a>
+<span class="sourceLineNo">281</span>      else <a name="line.281"></a>
+<span class="sourceLineNo">282</span>         fatCat = new FatCatFlexible();<a name="line.282"></a>
+<span class="sourceLineNo">283</span><a name="line.283"></a>
+<span class="sourceLineNo">284</span>      AFPChain afpChain = fatCat.align(ca1,ca2,params);<a name="line.284"></a>
+<span class="sourceLineNo">285</span><a name="line.285"></a>
+<span class="sourceLineNo">286</span>      afpChain.setName1(name1);<a name="line.286"></a>
+<span class="sourceLineNo">287</span>      afpChain.setName2(name2);<a name="line.287"></a>
+<span class="sourceLineNo">288</span><a name="line.288"></a>
+<span class="sourceLineNo">289</span>      // flexible original results:<a name="line.289"></a>
+<span class="sourceLineNo">290</span>      //String fatcat = afpChain.toFatcat(ca1,ca2);<a name="line.290"></a>
+<span class="sourceLineNo">291</span>      //System.out.println(result1);<a name="line.291"></a>
+<span class="sourceLineNo">292</span><a name="line.292"></a>
+<span class="sourceLineNo">293</span><a name="line.293"></a>
+<span class="sourceLineNo">294</span>      //String xml = AFPChainXMLConverter.toXML(afpChain,ca1,ca2);<a name="line.294"></a>
+<span class="sourceLineNo">295</span><a name="line.295"></a>
+<span class="sourceLineNo">296</span><a name="line.296"></a>
+<span class="sourceLineNo">297</span>      return afpChain;<a name="line.297"></a>
+<span class="sourceLineNo">298</span>   }<a name="line.298"></a>
+<span class="sourceLineNo">299</span><a name="line.299"></a>
+<span class="sourceLineNo">300</span><a name="line.300"></a>
+<span class="sourceLineNo">301</span>}<a name="line.301"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
